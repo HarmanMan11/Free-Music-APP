@@ -4,424 +4,345 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Free Music App</title>
-  
-  <!-- Roboto font -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
-  
   <style>
-    :root {
-      --color-bg-dark: #121212;
-      --color-bg-light: #f7f7f7;
-      --color-text-dark: #e0e0e0;
-      --color-text-light: #222;
-      --color-primary: #00ff88;
-      --color-secondary: #ff4081;
-      --color-accent: #1f1f1f;
-      --color-accent-light: #2e2e2e;
-      --color-button-hover: #00cc6a;
-      --transition: 0.3s ease;
+    /* Reset & Base */
+    * {
+      box-sizing: border-box;
     }
-
-    /* Темы */
-    body.dark-theme {
-      background-color: var(--color-bg-dark);
-      color: var(--color-text-dark);
-    }
-    body.light-theme {
-      background-color: var(--color-bg-light);
-      color: var(--color-text-light);
-    }
-
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
+      background-color: #121212;
+      color: white;
       padding-bottom: 4rem;
-      transition: background-color var(--transition), color var(--transition);
+      transition: background-color 0.4s ease, color 0.4s ease;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-
     header {
-      background-color: var(--color-accent);
-      padding: 1.2rem 1rem;
+      background-color: #1f1f1f;
+      padding: 1rem 1.5rem;
+      width: 100%;
       text-align: center;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
       user-select: none;
     }
     h1 {
       margin: 0;
+      color: #00ff88;
       font-weight: 700;
-      font-size: 1.8rem;
-      color: var(--color-primary);
-      text-shadow: 0 0 8px var(--color-primary);
+      font-size: 2rem;
+      letter-spacing: 1px;
     }
-
     .controls {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 0.75rem;
-      padding: 1rem;
-      background-color: var(--color-accent);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      background-color: #1a1a1a;
+      width: 100%;
+      max-width: 960px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      border-radius: 12px;
+      margin: 1rem 0;
       user-select: none;
-      align-items: center;
     }
     .controls input {
-      grid-column: span 2;
+      flex: 1 1 200px;
       padding: 0.6rem 1rem;
-      border-radius: 30px;
+      border-radius: 8px;
       border: none;
       outline: none;
       font-size: 1rem;
-      transition: box-shadow var(--transition);
+      transition: box-shadow 0.3s ease;
+      background-color: #282828;
+      color: white;
+      box-shadow: inset 0 0 5px #00ff88;
+    }
+    .controls input::placeholder {
+      color: #aaa;
     }
     .controls input:focus {
-      box-shadow: 0 0 8px var(--color-primary);
-      background-color: #222;
-      color: white;
+      box-shadow: 0 0 10px #00ff88;
+      background-color: #1e1e1e;
     }
     .controls button {
-      background-color: var(--color-primary);
+      background-color: #00ff88;
       border: none;
-      border-radius: 30px;
-      padding: 0.5rem 1rem;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--color-bg-dark);
+      border-radius: 8px;
+      padding: 0.5rem 1.2rem;
       cursor: pointer;
-      transition: background-color var(--transition), transform 0.15s ease;
-      box-shadow: 0 3px 5px rgba(0, 255, 136, 0.4);
+      font-weight: 600;
+      color: #121212;
+      box-shadow: 0 4px 6px rgba(0,255,136,0.6);
+      transition: background-color 0.3s ease, transform 0.15s ease;
       user-select: none;
+      flex: 0 0 auto;
     }
-    .controls button:hover:not(.active) {
-      background-color: var(--color-button-hover);
+    .controls button:hover {
+      background-color: #00cc6a;
       transform: scale(1.05);
-      box-shadow: 0 4px 10px rgba(0, 255, 136, 0.7);
     }
-    .controls button:active:not(.active) {
+    .controls button:active {
       transform: scale(0.95);
     }
-    .controls button.active {
-      background-color: var(--color-secondary);
-      color: white;
-      box-shadow: 0 0 15px var(--color-secondary);
-      cursor: default;
-      pointer-events: none;
-    }
-
-    #trackCount {
-      grid-column: span 2;
-      text-align: center;
-      font-size: 0.9rem;
-      color: var(--color-primary);
-      font-weight: 500;
-      user-select: none;
-    }
-
-    #loadingIndicator {
-      text-align: center;
-      font-style: italic;
-      color: #999;
-      margin-top: 0.5rem;
-      user-select: none;
-    }
-
     .track-list {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
-      padding: 1rem;
-      max-width: 700px;
-      margin: 0 auto 4rem;
+      gap: 1.2rem;
+      padding: 0 1.5rem 3rem;
+      width: 100%;
+      max-width: 960px;
+      flex-grow: 1;
     }
     .track {
-      background: var(--color-accent-light);
+      background: #2e2e2e;
       padding: 1rem 1.2rem;
-      border-radius: 15px;
+      border-radius: 14px;
+      max-width: 600px;
       width: 100%;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
       position: relative;
-      transition: transform 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      user-select: none;
+      transition: background-color 0.3s ease;
     }
     .track:hover {
-      transform: scale(1.02);
-      box-shadow: 0 6px 20px rgba(0, 255, 136, 0.7);
+      background-color: #393939;
     }
     .track h3 {
-      margin: 0 0 0.6rem;
-      font-weight: 600;
-      font-size: 1.1rem;
-      color: var(--color-primary);
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #00ff88;
       user-select: text;
     }
     audio {
       width: 100%;
       outline: none;
-      border-radius: 10px;
-      background-color: #000;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
-      cursor: pointer;
-      user-select: none;
-      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      box-shadow: inset 0 0 5px #00ff88;
+      background-color: #121212;
     }
-
     .like {
       position: absolute;
       top: 1rem;
       right: 1rem;
-      font-size: 1.8rem;
       cursor: pointer;
+      font-size: 1.8rem;
       user-select: none;
+      transition: transform 0.3s ease, color 0.3s ease;
       color: #bbb;
-      transition: color 0.3s ease, transform 0.2s ease;
-      will-change: transform;
-      filter: drop-shadow(0 0 1px rgba(0,0,0,0.6));
+      filter: drop-shadow(0 0 2px #000);
     }
     .like:hover {
-      color: var(--color-secondary);
-      transform: scale(1.2);
+      transform: scale(1.3);
+      color: #ff4081;
+      filter: drop-shadow(0 0 6px #ff4081);
     }
     .like.liked {
-      color: var(--color-secondary);
-      animation: heartbeat 1s ease infinite;
+      color: #ff4081;
+      animation: heartbeat 1s infinite;
+      filter: drop-shadow(0 0 8px #ff4081);
     }
-    .like.liked:hover {
-      animation: none;
-      transform: scale(1.3);
-    }
-
     @keyframes heartbeat {
       0%, 100% { transform: scale(1); }
-      25% { transform: scale(1.15); }
-      50% { transform: scale(1.1); }
-      75% { transform: scale(1.15); }
+      50% { transform: scale(1.3); }
     }
-
     .footer {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background: var(--color-accent);
+      background: #1f1f1f;
       padding: 1rem;
       text-align: center;
       color: #888;
-      font-size: 0.9rem;
       user-select: none;
-      box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.3);
+      font-size: 0.9rem;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.7);
     }
-
-    /* Адаптивность для мелких экранов */
-    @media (max-width: 480px) {
+    /* Light theme */
+    body.light-theme {
+      background-color: white;
+      color: #121212;
+    }
+    body.light-theme header {
+      background-color: #e0e0e0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    body.light-theme .controls {
+      background-color: #f5f5f5;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    body.light-theme .controls input {
+      background-color: #fff;
+      color: #121212;
+      box-shadow: inset 0 0 5px #00cc6a;
+    }
+    body.light-theme .controls input::placeholder {
+      color: #666;
+    }
+    body.light-theme .track {
+      background-color: #f0f0f0;
+      color: #121212;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    body.light-theme .track:hover {
+      background-color: #e6e6e6;
+    }
+    body.light-theme audio {
+      background-color: #fff;
+      box-shadow: inset 0 0 5px #00cc6a;
+    }
+    body.light-theme .like {
+      color: #888;
+      filter: none;
+    }
+    body.light-theme .like:hover {
+      color: #e91e63;
+      filter: drop-shadow(0 0 6px #e91e63);
+    }
+    body.light-theme .like.liked {
+      color: #e91e63;
+      filter: drop-shadow(0 0 8px #e91e63);
+    }
+    body.light-theme .footer {
+      background: #e0e0e0;
+      color: #444;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.05);
+    }
+    /* Responsive */
+    @media (max-width: 640px) {
       .controls {
-        grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
+        flex-direction: column;
+        gap: 0.7rem;
       }
       .controls input {
-        grid-column: span 2;
+        flex: 1 1 100%;
       }
       .controls button {
-        font-size: 0.85rem;
-        padding: 0.5rem 0.7rem;
+        flex: 1 1 100%;
+      }
+      .track {
+        max-width: 100%;
+      }
+      .track-list {
+        padding: 0 1rem 3rem;
       }
     }
   </style>
 </head>
-<body class="dark-theme">
+<body>
 
   <header>
     <h1>🎵 Free Music App</h1>
   </header>
 
-  <div class="controls" role="region" aria-label="Управление музыкой">
-    <input id="search" type="text" placeholder="Поиск трека..." aria-label="Поиск трека" />
-    <button id="clearSearchBtn" title="Очистить поиск">Очистить</button>
-    <button data-genre="all" class="genre-btn active" aria-pressed="true">Все</button>
-    <button data-genre="classical" class="genre-btn" aria-pressed="false">Классика</button>
-    <button data-genre="lounge" class="genre-btn" aria-pressed="false">Лаунж</button>
-    <button data-genre="electronic" class="genre-btn" aria-pressed="false">Электроника</button>
-    <button data-genre="vintage" class="genre-btn" aria-pressed="false">Винтаж</button>
-    <button data-genre="ethno" class="genre-btn" aria-pressed="false">Этно</button>
-    <button data-genre="live" class="genre-btn" aria-pressed="false">Лайв</button>
-    <button id="showFavoritesBtn" title="Показать избранное">❤️ Избранное</button>
-    <button id="sortBtn" title="Сортировать по названию">⬆️⬇️ Сортировка</button>
-    <button id="themeToggleBtn" title="Переключить тему">🌓 Тема</button>
-    <div id="trackCount" aria-live="polite" aria-atomic="true">Найдено треков: 0</div>
+  <div class="controls">
+    <input id="search" type="text" placeholder="Поиск трека..." autocomplete="off" />
+    <button onclick="filterByGenre('all')">Все</button>
+    <button onclick="filterByGenre('classical')">Классика</button>
+    <button onclick="filterByGenre('lounge')">Лаунж</button>
+    <button onclick="filterByGenre('electronic')">Электроника</button>
+    <button onclick="filterByGenre('vintage')">Винтаж</button>
+    <button onclick="filterByGenre('ethno')">Этно</button>
+    <button onclick="filterByGenre('live')">Лайв</button>
+    <button onclick="showFavorites()">❤️ Избранное</button>
+    <button onclick="toggleTheme()">🌓 Тема</button>
   </div>
 
-  <div id="loadingIndicator" aria-live="polite"></div>
-  <main class="track-list" id="trackList" role="list"></main>
+  <div class="track-list" id="trackList" role="list"></div>
 
-  <footer class="footer">
+  <div class="footer">
     Made with ❤️ using archive.org open music
-  </footer>
+  </div>
 
   <script>
-    const musicTracks = [
-      {
-        title: "Sonatina in C major",
-        src: "https://archive.org/download/MozartSonatinaInCMajor/MozartSonatinaInCMajor.mp3",
-        genre: "classical"
-      },
-      {
-        title: "Lounge Relaxation",
-        src: "https://archive.org/download/LoungeRelaxation_201407/LoungeRelaxation.mp3",
-        genre: "lounge"
-      },
-      {
-        title: "Electronic Vibes",
-        src: "https://archive.org/download/electronicvibes_201812/electronicvibes.mp3",
-        genre: "electronic"
-      },
-      {
-        title: "Vintage Jazz",
-        src: "https://archive.org/download/vintagejazz_202001/vintagejazz.mp3",
-        genre: "vintage"
-      },
-      {
-        title: "Ethno Beats",
-        src: "https://archive.org/download/ethnobeats_201904/ethnobeats.mp3",
-        genre: "ethno"
-      },
-      {
-        title: "Live Concert",
-        src: "https://archive.org/download/liveconcert_202003/liveconcert.mp3",
-        genre: "live"
-      }
+    // Треки
+    const tracks = [
+      { title: "Beethoven - Symphony No.5", src: "https://archive.org/download/BeethovenSymphony5/BeethovenSymphony5.mp3", genre: "classical" },
+      { title: "Chopin - Prelude No.15", src: "https://archive.org/download/Chopin_Prelude_No_15/Chopin_Prelude_No_15.mp3", genre: "classical" },
+      { title: "Electronic Breeze", src: "https://archive.org/download/electronic_beats/electronic_breeze.mp3", genre: "electronic" },
+      { title: "Lounge Cafe", src: "https://archive.org/download/lounge_collection/lounge_cafe.mp3", genre: "lounge" },
+      { title: "Vintage Jazz", src: "https://archive.org/download/vintage_jazz/vintage_jazz_01.mp3", genre: "vintage" },
+      { title: "Ethno Vibes", src: "https://archive.org/download/ethno_collection/ethno_vibes.mp3", genre: "ethno" },
+      { title: "Live Session A", src: "https://archive.org/download/live_music_a/live_session_a.mp3", genre: "live" },
     ];
 
-    let appState = {
+    // Состояние приложения
+    window.appState = window.appState || {
       currentGenre: 'all',
       favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
       isShowingFavorites: false,
-      sortedAsc: true
     };
 
-    let filteredTracksCache = [];
-    let currentPlayingIndex = -1;
-
-    const trackListEl = document.getElementById('trackList');
-    const trackCountEl = document.getElementById('trackCount');
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    const searchInput = document.getElementById('search');
-    const clearSearchBtn = document.getElementById('clearSearchBtn');
-    const genreButtons = [...document.querySelectorAll('.genre-btn')];
-    const showFavoritesBtn = document.getElementById('showFavoritesBtn');
-    const sortBtn = document.getElementById('sortBtn');
-    const themeToggleBtn = document.getElementById('themeToggleBtn');
-
-    // Рендер треков
+    // Рендеринг списка треков с фильтрацией
     function renderTracks(filter = '') {
-      loadingIndicator.textContent = 'Загрузка треков...';
-      trackListEl.innerHTML = '';
+      const list = document.getElementById('trackList');
+      list.innerHTML = '';
+
       const lowerFilter = filter.toLowerCase();
 
-      let tracksToRender = [];
+      // Выбираем список для отображения: либо все треки по жанру + поиску, либо только избранные
+      let filteredTracks = [];
 
       if (appState.isShowingFavorites) {
-        tracksToRender = musicTracks.filter(t => appState.favorites.includes(t.src));
+        filteredTracks = tracks.filter(t => appState.favorites.includes(t.src));
       } else {
-        tracksToRender = musicTracks.filter(t => appState.currentGenre === 'all' || t.genre === appState.currentGenre);
+        filteredTracks = tracks.filter(t =>
+          (appState.currentGenre === 'all' || t.genre === appState.currentGenre) &&
+          t.title.toLowerCase().includes(lowerFilter)
+        );
       }
 
-      if (filter) {
-        tracksToRender = tracksToRender.filter(t => t.title.toLowerCase().includes(lowerFilter));
-      }
-
-      filteredTracksCache = tracksToRender;
-
-      trackCountEl.textContent = `Найдено треков: ${tracksToRender.length}`;
-
-      if (tracksToRender.length === 0) {
-        trackListEl.innerHTML = '<p style="text-align:center; color:#999; user-select:none;">Треки не найдены.</p>';
-        loadingIndicator.textContent = '';
+      if (filteredTracks.length === 0) {
+        list.innerHTML = '<p style="color:#888; font-style:italic; user-select:none;">Треков не найдено</p>';
         return;
       }
 
-      tracksToRender.forEach((track, index) => {
+      filteredTracks.forEach(track => {
         const div = document.createElement('div');
         div.className = 'track';
         div.setAttribute('role', 'listitem');
-        div.tabIndex = 0;
-
         const liked = appState.favorites.includes(track.src);
 
         div.innerHTML = `
           <h3>${track.title}</h3>
-          <audio controls src="${track.src}" preload="none" aria-label="Аудио трек: ${track.title}"></audio>
-          <div class="like ${liked ? 'liked' : ''}" title="Добавить в избранное" role="button" aria-pressed="${liked}">❤️</div>
+          <audio controls src="${track.src}"></audio>
+          <div class="like ${liked ? 'liked' : ''}" title="Понравилось" role="button" aria-pressed="${liked}" tabindex="0">❤️</div>
         `;
 
-        trackListEl.appendChild(div);
+        // Обработчик лайка с клавиатуры (Enter/Space)
+        const likeEl = div.querySelector('.like');
+        likeEl.addEventListener('click', () => toggleLike(track.src, likeEl));
+        likeEl.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleLike(track.src, likeEl);
+          }
+        });
 
-        const audio = div.querySelector('audio');
-        const likeBtn = div.querySelector('.like');
-
-        likeBtn.onclick = () => toggleLike(track.src, likeBtn);
-
-        audio.onplay = () => {
-          currentPlayingIndex = index;
-          pauseOtherAudios(index);
-        };
-
-        audio.onended = () => {
-          playNextTrack();
-        };
-      });
-
-      loadingIndicator.textContent = '';
-    }
-
-    // Остановить все аудио кроме выбранного
-    function pauseOtherAudios(exceptIndex) {
-      const audios = document.querySelectorAll('#trackList audio');
-      audios.forEach((audio, idx) => {
-        if (idx !== exceptIndex) {
-          audio.pause();
-          audio.currentTime = 0;
-        }
+        list.appendChild(div);
       });
     }
 
-    // Проиграть следующий трек
-    function playNextTrack() {
-      if (currentPlayingIndex < 0) return;
-      const nextIndex = currentPlayingIndex + 1;
-      if (nextIndex < filteredTracksCache.length) {
-        const audios = document.querySelectorAll('#trackList audio');
-        const nextAudio = audios[nextIndex];
-        if (nextAudio) {
-          nextAudio.play();
-          currentPlayingIndex = nextIndex;
-        }
-      }
-    }
-
-    // Фильтр по жанру с визуальным выделением
+    // Фильтрация по жанру
     function filterByGenre(genre) {
       appState.currentGenre = genre;
       appState.isShowingFavorites = false;
-      searchInput.value = '';
-
-      genreButtons.forEach(btn => {
-        if (btn.dataset.genre === genre) {
-          btn.classList.add('active');
-          btn.setAttribute('aria-pressed', 'true');
-        } else {
-          btn.classList.remove('active');
-          btn.setAttribute('aria-pressed', 'false');
-        }
-      });
-
-      showFavoritesBtn.classList.remove('active');
-      showFavoritesBtn.setAttribute('aria-pressed', 'false');
-
-      renderTracks();
+      document.getElementById('search').value = '';
+      renderTracks('');
     }
 
-    function clearSearch() {
-      searchInput.value = '';
-      renderTracks();
-    }
-
+    // Лайк/дизлайк трека
     function toggleLike(src, el) {
       if (appState.favorites.includes(src)) {
         appState.favorites = appState.favorites.filter(f => f !== src);
@@ -435,56 +356,36 @@
       localStorage.setItem('favorites', JSON.stringify(appState.favorites));
     }
 
+    // Показать избранное
     function showFavorites() {
       appState.isShowingFavorites = true;
-      appState.currentGenre = 'all';
-
-      genreButtons.forEach(btn => {
-        btn.classList.remove('active');
-        btn.setAttribute('aria-pressed', 'false');
-      });
-      showFavoritesBtn.classList.add('active');
-      showFavoritesBtn.setAttribute('aria-pressed', 'true');
-
-      searchInput.value = '';
-      renderTracks();
+      document.getElementById('search').value = '';
+      renderTracks('');
     }
 
-    function sortByTitle() {
-      appState.sortedAsc = !appState.sortedAsc;
-      musicTracks.sort((a, b) => {
-        if (a.title.toLowerCase() < b.title.toLowerCase()) return appState.sortedAsc ? -1 : 1;
-        if (a.title.toLowerCase() > b.title.toLowerCase()) return appState.sortedAsc ? 1 : -1;
-        return 0;
-      });
-      renderTracks(searchInput.value);
+    // Debounce для поиска
+    function debounce(func, delay) {
+      let timeoutId;
+      return function(...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+      };
     }
 
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('input', debounce((e) => {
+      appState.isShowingFavorites = false;
+      renderTracks(e.target.value);
+    }, 300));
+
+    // Переключение темы с плавной анимацией
     function toggleTheme() {
-      const body = document.body;
-      if (body.classList.contains('dark-theme')) {
-        body.classList.replace('dark-theme', 'light-theme');
-        themeToggleBtn.textContent = '🌙 Тема';
-      } else {
-        body.classList.replace('light-theme', 'dark-theme');
-        themeToggleBtn.textContent = '🌓 Тема';
-      }
+      document.body.classList.toggle('light-theme');
     }
 
-    // События
-    searchInput.addEventListener('input', () => renderTracks(searchInput.value));
-    clearSearchBtn.addEventListener('click', clearSearch);
-    genreButtons.forEach(btn => {
-      btn.addEventListener('click', () => filterByGenre(btn.dataset.genre));
-    });
-    showFavoritesBtn.addEventListener('click', showFavorites);
-    sortBtn.addEventListener('click', sortByTitle);
-    themeToggleBtn.addEventListener('click', toggleTheme);
+    // Инициализация
+    filterByGenre('all'); // чтобы отрисовать сразу все
 
-    // Начальный рендер
-    window.onload = () => {
-      renderTracks();
-    };
   </script>
 </body>
 </html>
