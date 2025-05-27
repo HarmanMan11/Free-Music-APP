@@ -3,162 +3,96 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Free Music App v1.1.0</title>
+  <title>Free Music App</title>
   <style>
-    /* Reset и базовые стили */
-    * {
-      box-sizing: border-box;
-    }
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #121212;
-      color: #eee;
-      min-height: 100vh;
+      color: white;
       padding-bottom: 4rem;
       transition: background-color 0.3s, color 0.3s;
-      overflow-y: scroll;
     }
-    body.light-theme {
-      background-color: #fefefe;
-      color: #222;
-    }
-
     header {
       background-color: #1f1f1f;
       padding: 1rem;
       text-align: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-    }
-    body.light-theme header {
-      background-color: #eaeaea;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     h1 {
       margin: 0;
       color: #00ff88;
       user-select: none;
     }
-    body.light-theme h1 {
-      color: #008844;
-    }
-
     .controls {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 0.75rem;
+      gap: 1rem;
       padding: 1rem;
       background-color: #1a1a1a;
-      box-shadow: inset 0 -1px 3px rgba(0,0,0,0.7);
-      user-select: none;
     }
-    body.light-theme .controls {
-      background-color: #f5f5f5;
-      box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1);
-    }
-    .controls input[type="text"] {
-      flex-grow: 1;
-      max-width: 300px;
-      padding: 0.5rem 0.75rem;
-      border-radius: 6px;
-      border: none;
-      font-size: 1rem;
-      outline: none;
-      transition: background-color 0.3s, color 0.3s;
-      background-color: #2b2b2b;
-      color: #eee;
-    }
-    body.light-theme .controls input[type="text"] {
-      background-color: #fff;
-      color: #222;
-      border: 1px solid #ccc;
-    }
-    .controls button {
+    .controls input, .controls button {
       padding: 0.5rem 1rem;
-      border-radius: 6px;
+      border-radius: 5px;
       border: none;
+      outline: none;
+      background: #2a2a2a;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s;
+    }
+    .controls input:focus, .controls button:hover {
       background-color: #00ff88;
       color: #121212;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 3px 8px rgba(0,255,136,0.5);
-      transition: background-color 0.3s, color 0.3s;
-      user-select: none;
     }
-    .controls button:hover {
-      background-color: #00cc66;
-      box-shadow: 0 4px 12px rgba(0,204,102,0.8);
-      color: #fff;
-    }
-    body.light-theme .controls button {
-      background-color: #008844;
-      color: #fff;
-      box-shadow: 0 3px 8px rgba(0,136,68,0.5);
-    }
-    body.light-theme .controls button:hover {
-      background-color: #006622;
-      box-shadow: 0 4px 12px rgba(0,102,34,0.8);
-    }
-
     .track-list {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 1rem;
-      padding: 1rem 1rem 6rem;
-      max-width: 800px;
+      padding: 1rem;
+      max-width: 700px;
       margin: 0 auto;
     }
     .track {
       background: #2e2e2e;
-      padding: 1rem 1.2rem;
-      border-radius: 12px;
+      padding: 1rem;
+      border-radius: 10px;
+      max-width: 600px;
       width: 100%;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
       position: relative;
       transition: background-color 0.3s;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
     }
-    body.light-theme .track {
-      background: #fff;
-      color: #222;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    .track:hover {
+      background-color: #3b3b3b;
     }
     .track h3 {
-      margin: 0;
-      font-size: 1.15rem;
-      user-select: text;
+      margin: 0 0 0.5rem;
+      font-size: 1.2rem;
+      user-select: none;
     }
     audio {
       width: 100%;
       outline: none;
       border-radius: 6px;
-      background-color: #111;
-    }
-    body.light-theme audio {
-      background-color: #ddd;
+      background: #121212;
     }
     .like {
       position: absolute;
-      top: 12px;
-      right: 12px;
-      font-size: 1.7rem;
+      top: 1rem;
+      right: 1rem;
       cursor: pointer;
+      font-size: 1.6rem;
       user-select: none;
       transition: color 0.3s;
-      color: #bbb;
+      color: #aaa;
+      user-select: none;
     }
     .like.liked {
       color: #ff4081;
-      text-shadow: 0 0 5px #ff4081aa;
     }
-    .like:hover {
-      color: #ff4081;
-    }
-
     .footer {
       position: fixed;
       bottom: 0;
@@ -170,672 +104,417 @@
       color: #888;
       font-size: 0.9rem;
       user-select: none;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.7);
-      transition: background-color 0.3s, color 0.3s;
-    }
-    body.light-theme .footer {
-      background: #eaeaea;
-      color: #555;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
     }
 
-    /* Чат: кнопка открытия */
+    /* === Чат === */
     #chatToggleBtn {
       position: fixed;
-      bottom: 80px;
-      right: 24px;
-      background-color: #00ff88;
-      color: #121212;
-      border: none;
-      border-radius: 50%;
-      width: 56px;
-      height: 56px;
+      right: 20px;
+      bottom: 20px;
       font-size: 28px;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0,255,136,0.7);
+      background: #282828;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
       user-select: none;
-      z-index: 9999;
-      transition: background-color 0.3s, color 0.3s;
+      transition: background-color 0.3s;
     }
     #chatToggleBtn:hover {
-      background-color: #00cc66;
-      color: #fff;
-    }
-    body.light-theme #chatToggleBtn {
-      background-color: #008844;
-      color: #fff;
-      box-shadow: 0 4px 14px rgba(0,136,68,0.7);
-    }
-    body.light-theme #chatToggleBtn:hover {
-      background-color: #006622;
-    }
-
-    /* Модальное окно чата */
-    #chatModal {
-      position: fixed;
-      bottom: 140px;
-      right: 24px;
-      width: 320px;
-      max-height: 420px;
-      background-color: #222;
-      border-radius: 12px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.8);
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-      z-index: 10000;
-      user-select: none;
-      color: #eee;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    body.light-theme #chatModal {
-      background-color: #f0f0f0;
-      color: #222;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-    }
-    #chatModal header {
-      background-color: #00ff88;
+      background: #00ff88;
       color: #121212;
-      padding: 0.5rem 1rem;
-      font-weight: 700;
-      font-size: 1.1rem;
+    }
+    #nicknameModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
       user-select: none;
     }
-    body.light-theme #chatModal header {
-      background-color: #008844;
-      color: #fff;
+    #nicknameModal > div {
+      background: #222;
+      padding: 1.5rem;
+      border-radius: 8px;
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 0 15px #00ff88;
     }
-    #chatMessages {
-      flex-grow: 1;
-      padding: 0.75rem 1rem;
-      overflow-y: auto;
-      font-size: 0.9rem;
-      line-height: 1.3;
-      background-color: #1a1a1a;
+    #nicknameModal h3 {
+      margin: 0 0 0.5rem 0;
+      color: #00ff88;
+      user-select: none;
+      text-align: center;
+    }
+    #nicknameInput {
+      padding: 0.6rem;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
       user-select: text;
     }
-    body.light-theme #chatMessages {
-      background-color: #fff;
-    }
-    .chat-message {
-      margin-bottom: 0.4rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: 6px;
-      word-wrap: break-word;
-      max-width: 80%;
-    }
-    .chat-message.me {
-      background-color: #00ff88aa;
-      color: #121212;
-      margin-left: auto;
-      text-align: right;
-    }
-    .chat-message.other {
-      background-color: #333;
-      color: #eee;
-    }
-    body.light-theme .chat-message.other {
-      background-color: #ddd;
-      color: #222;
-    }
-    #chatInputWrapper {
-      padding: 0.5rem;
-      background-color: #111;
-      display: flex;
-      gap: 0.5rem;
-    }
-    body.light-theme #chatInputWrapper {
-      background-color: #ddd;
-    }
-    #chatInput {
-      flex-grow: 1;
-      border-radius: 6px;
-      border: none;
-      padding: 0.4rem 0.75rem;
-      font-size: 1rem;
-      outline: none;
-      color: #eee;
-      background-color: #333;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    body.light-theme #chatInput {
-      color: #222;
-      background-color: #fff;
-      border: 1px solid #bbb;
-    }
-    #chatSendBtn {
+    #nicknameSubmitBtn {
       background-color: #00ff88;
       border: none;
+      padding: 0.6rem;
       border-radius: 6px;
-      color: #121212;
-      font-weight: 700;
-      font-size: 1.1rem;
-      padding: 0 0.8rem;
       cursor: pointer;
+      font-weight: 600;
+      user-select: none;
+      color: #121212;
+      transition: background-color 0.3s;
+    }
+    #nicknameSubmitBtn:hover {
+      background-color: #00cc66;
+    }
+    #chatModal {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      background:#222;
+      padding:10px;
+      width:320px;
+      height:400px;
+      position:fixed;
+      bottom:80px;
+      right:20px;
+      border-radius:10px;
+      box-shadow:0 0 12px #00ff88;
+      z-index: 10000;
+      user-select: none;
+    }
+    #chatMessages {
+      flex-grow:1;
+      overflow-y:auto;
+      margin-bottom: 10px;
+      padding-right: 5px;
+      font-size: 0.9rem;
+    }
+    #chatMessages::-webkit-scrollbar {
+      width: 6px;
+    }
+    #chatMessages::-webkit-scrollbar-thumb {
+      background: #00ff88;
+      border-radius: 3px;
+    }
+    #chatInput {
+      flex-grow:1;
+      padding:6px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      user-select: text;
+    }
+    #chatSendBtn {
+      width: 48px;
+      background: #00ff88;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      color: #121212;
       user-select: none;
       transition: background-color 0.3s;
     }
     #chatSendBtn:hover {
       background-color: #00cc66;
-      color: #fff;
     }
-    body.light-theme #chatSendBtn {
-      background-color: #008844;
-      color: #fff;
+    .chat-message {
+      margin: 0.2rem 0;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      max-width: 75%;
+      word-break: break-word;
     }
-    body.light-theme #chatSendBtn:hover {
-      background-color: #006622;
+    .chat-message.me {
+      background: #0a8;
+      color: white;
+      align-self: flex-end;
+    }
+    .chat-message.other {
+      background: #444;
+      color: #eee;
+      align-self: flex-start;
     }
 
-    /* Модалка для ввода ника */
-    #nicknameModal {
-      position: fixed;
-      inset: 0;
-      background-color: rgba(0,0,0,0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 11000;
-      user-select: none;
-    }
-    #nicknameModalContent {
-      background-color: #222;
-      padding: 1.5rem 2rem;
-      border-radius: 12px;
-      width: 280px;
-      color: #eee;
-      text-align: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.9);
-    }
-    body.light-theme #nicknameModalContent {
-      background-color: #fff;
-      color: #222;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    }
-    #nicknameInput {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      border-radius: 6px;
-      border: none;
-      font-size: 1rem;
-      margin: 1rem 0;
-      outline: none;
-    }
-    body.light-theme #nicknameInput {
-      border: 1px solid #bbb;
-    }
-    #nicknameSubmitBtn {
-      background-color: #00ff88;
-      border: none;
-      border-radius: 6px;
+    /* Тёмная/светлая тема */
+    body.light-theme {
+      background-color: white;
       color: #121212;
-      font-weight: 700;
-      padding: 0.5rem 1.2rem;
-      cursor: pointer;
-      user-select: none;
-      font-size: 1rem;
-      transition: background-color 0.3s;
     }
-    #nicknameSubmitBtn:hover {
-      background-color: #00cc66;
-      color: #fff;
+    body.light-theme header {
+      background-color: #ddd;
     }
-    body.light-theme #nicknameSubmitBtn {
-      background-color: #008844;
-      color: #fff;
+    body.light-theme .controls {
+      background-color: #eee;
     }
-    body.light-theme #nicknameSubmitBtn:hover {
-      background-color: #006622;
+    body.light-theme .controls input, 
+    body.light-theme .controls button {
+      background: #fff;
+      color: #121212;
+    }
+    body.light-theme .controls input:focus, 
+    body.light-theme .controls button:hover {
+      background-color: #00aa55;
+      color: white;
+    }
+    body.light-theme .track {
+      background-color: #ddd;
+      color: #121212;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    body.light-theme .track:hover {
+      background-color: #ccc;
+    }
+    body.light-theme .like {
+      color: #555;
+    }
+    body.light-theme .like.liked {
+      color: #d40057;
+    }
+    body.light-theme audio {
+      background: #fff;
+    }
+    body.light-theme .footer {
+      background: #ddd;
+      color: #555;
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>🎵 Free Music App v1.1.0</h1>
-</header>
+  <header>
+    <h1>🎵 Free Music App</h1>
+  </header>
 
-<div class="controls">
-  <input id="search" type="text" placeholder="Поиск трека..." autocomplete="off" />
-  <button onclick="filterByGenre('all')">Все</button>
-  <button onclick="filterByGenre('classical')">Классика</button>
-  <button onclick="filterByGenre('lounge')">Лаунж</button>
-  <button onclick="filterByGenre('electronic')">Электроника</button>
-  <button onclick="filterByGenre('vintage')">Винтаж</button>
-  <button onclick="filterByGenre('ethno')">Этно</button>
-  <button onclick="filterByGenre('live')">Лайв</button>
-  <button onclick="showFavorites()">❤️ Избранное</button>
-  <button onclick="toggleTheme()">🌓 Тема</button>
-</div>
-
-<div class="track-list" id="trackList"></div>
-
-<div class="footer">© 2025 Free Music App — Музыка и чат в одном месте</div>
-
-<!-- Кнопка открытия чата -->
-<button id="chatToggleBtn" title="Открыть чат">💬</button>
-
-<!-- Модалка чата -->
-<div id="chatModal">
-  <header>Чат</header>
-  <div id="chatMessages"></div>
-  <div id="chatInputWrapper">
-    <input id="chatInput" type="text" placeholder="Введите сообщение..." autocomplete="off" />
-    <button id="chatSendBtn">Отправить</button>
+  <div class="controls">
+    <input id="search" type="text" placeholder="Поиск трека...">
+    <button onclick="filterByGenre('all')">Все</button>
+    <button onclick="filterByGenre('classical')">Классика</button>
+    <button onclick="filterByGenre('lounge')">Лаунж</button>
+    <button onclick="filterByGenre('electronic')">Электроника</button>
+    <button id="toggleThemeBtn">Тёмная/Светлая тема</button>
   </div>
-</div>
 
-<!-- Модалка ввода ника -->
-<div id="nicknameModal" style="display:none;">
-  <div id="nicknameModalContent">
-    <h2>Введите ваш ник для чата</h2>
-    <input id="nicknameInput" type="text" placeholder="Ваш ник" maxlength="20" />
-    <button id="nicknameSubmitBtn">Войти</button>
+  <div id="trackList" class="track-list"></div>
+
+  <div class="footer">
+    © 2025 Free Music App — Все права защищены
   </div>
-</div>
 
-<script>
-  // Данные треков — можно заменить своими mp3 и метаданными
-  const tracks = [
-    {
-      id: 1,
-      title: "Classical Morning",
-      src: "https://cdn.pixabay.com/download/audio/2021/12/26/audio_7e99b3be3f.mp3?filename=classical-morning-6969.mp3",
-      genre: "classical",
-    },
-    {
-      id: 2,
-      title: "Lounge Vibes",
-      src: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_7a59db79a3.mp3?filename=lounge-vibes-1234.mp3",
-      genre: "lounge",
-    },
-    {
-      id: 3,
-      title: "Electronic Beat",
-      src: "https://cdn.pixabay.com/download/audio/2021/10/04/audio_63e3d4561c.mp3?filename=electronic-beat-5678.mp3",
-      genre: "electronic",
-    },
-    {
-      id: 4,
-      title: "Vintage Jazz",
-      src: "https://cdn.pixabay.com/download/audio/2021/09/25/audio_8f6b4b5767.mp3?filename=vintage-jazz-4321.mp3",
-      genre: "vintage",
-    },
-    {
-      id: 5,
-      title: "Ethno Fusion",
-      src: "https://cdn.pixabay.com/download/audio/2021/12/15/audio_7d6b3e0c1a.mp3?filename=ethno-fusion-7890.mp3",
-      genre: "ethno",
-    },
-    {
-      id: 6,
-      title: "Live Concert",
-      src: "https://cdn.pixabay.com/download/audio/2022/02/10/audio_4a1fbc6e2a.mp3?filename=live-concert-3456.mp3",
-      genre: "live",
-    },
-  ];
+  <!-- Кнопка открытия чата -->
+  <button id="chatToggleBtn" title="Открыть чат">💬</button>
 
-  // Локальное хранилище избранного
-  const favoritesKey = "fmapp_favorites";
-  const chatHistoryKey = "fmapp_chat_history";
-  const nicknameKey = "fmapp_nickname";
-  const themeKey = "fmapp_theme";
+  <!-- Модалка для ввода ника -->
+  <div id="nicknameModal" style="display:none; flex-direction: column; justify-content: center; align-items: center;">
+    <div>
+      <h3>Введите ваш ник</h3>
+      <input id="nicknameInput" type="text" placeholder="Ник" />
+      <button id="nicknameSubmitBtn">Подтвердить</button>
+    </div>
+  </div>
 
-  let favorites = JSON.parse(localStorage.getItem(favoritesKey)) || [];
-  let currentGenre = "all";
-  let currentSearch = "";
-  let showingFavorites = false;
+  <!-- Окно чата -->
+  <div id="chatModal" style="display:none; flex-direction: column; justify-content: space-between; background:#222; padding:10px; width:320px; height:400px; position:fixed; bottom:80px; right:20px; border-radius:10px; box-shadow:0 0 12px #00ff88; z-index: 10000;">
+    <div id="chatMessages" style="flex-grow:1; overflow-y:auto; margin-bottom:10px;"></div>
+    <div style="display:flex; gap: 5px;">
+      <input id="chatInput" type="text" placeholder="Введите сообщение..." style="flex-grow:1; padding:6px;" />
+      <button id="chatSendBtn" style="width:50px;">▶️</button>
+    </div>
+  </div>
 
-  const trackListEl = document.getElementById("trackList");
-  const searchInput = document.getElementById("search");
+  <script>
+    // --- Музыкальное приложение ---
+    const tracks = [
+      {
+        id: 1,
+        title: "Sonata No. 1",
+        genre: "classical",
+        url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      },
+      {
+        id: 2,
+        title: "Lounge Chill",
+        genre: "lounge",
+        url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+      },
+      {
+        id: 3,
+        title: "Electronic Beats",
+        genre: "electronic",
+        url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+      },
+      {
+        id: 4,
+        title: "Classical Violin",
+        genre: "classical",
+        url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+      },
+      {
+        id: 5,
+        title: "Lounge Smooth",
+        genre: "lounge",
+        url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+      }
+    ];
 
-  // Отрисовка треков
-  function renderTracks() {
-    trackListEl.innerHTML = "";
+    const likedTracksKey = "freeMusicAppLikedTracks";
 
-    let filteredTracks = tracks.filter(track => {
-      if (showingFavorites && !favorites.includes(track.id)) return false;
-      if (currentGenre !== "all" && track.genre !== currentGenre) return false;
-      if (currentSearch.trim() !== "" && !track.title.toLowerCase().includes(currentSearch.toLowerCase())) return false;
-      return true;
+    let likedTracks = JSON.parse(localStorage.getItem(likedTracksKey)) || [];
+
+    const trackListEl = document.getElementById("trackList");
+    const searchInput = document.getElementById("search");
+    const toggleThemeBtn = document.getElementById("toggleThemeBtn");
+
+    function saveLiked() {
+      localStorage.setItem(likedTracksKey, JSON.stringify(likedTracks));
+    }
+
+    function renderTracks(filterGenre = "all", searchTerm = "") {
+      trackListEl.innerHTML = "";
+      let filtered = tracks.filter(t => 
+        (filterGenre === "all" || t.genre === filterGenre) && 
+        t.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      if(filtered.length === 0) {
+        trackListEl.innerHTML = "<p style='text-align:center; color:#888;'>Треки не найдены</p>";
+        return;
+      }
+      filtered.forEach(track => {
+        const div = document.createElement("div");
+        div.className = "track";
+        div.innerHTML = `
+          <h3>${track.title}</h3>
+          <audio controls preload="none" src="${track.url}"></audio>
+          <div class="like ${likedTracks.includes(track.id) ? "liked" : ""}" title="Понравилось" data-id="${track.id}">❤</div>
+        `;
+        trackListEl.appendChild(div);
+      });
+    }
+
+    trackListEl.addEventListener("click", e => {
+      if(e.target.classList.contains("like")) {
+        const id = Number(e.target.dataset.id);
+        if(likedTracks.includes(id)) {
+          likedTracks = likedTracks.filter(tid => tid !== id);
+          e.target.classList.remove("liked");
+        } else {
+          likedTracks.push(id);
+          e.target.classList.add("liked");
+        }
+        saveLiked();
+      }
     });
 
-    if (filteredTracks.length === 0) {
-      trackListEl.innerHTML = `<p style="text-align:center; opacity:0.6; user-select:none;">Треки не найдены</p>`;
-      return;
-    }
-
-    filteredTracks.forEach(track => {
-      const isLiked = favorites.includes(track.id);
-      const trackEl = document.createElement("div");
-      trackEl.className = "track";
-
-      trackEl.innerHTML = `
-        <h3>${track.title}</h3>
-        <audio controls preload="none" src="${track.src}"></audio>
-        <span class="like${isLiked ? " liked" : ""}" title="Добавить в избранное" data-id="${track.id}">&#10084;</span>
-      `;
-
-      // Обработка лайка
-      trackEl.querySelector(".like").onclick = (e) => {
-        const id = parseInt(e.target.dataset.id);
-        toggleFavorite(id);
-      };
-
-      // Сделать, чтобы запуск одного аудио останавливал другое
-      const audio = trackEl.querySelector("audio");
-      audio.onplay = () => {
-        document.querySelectorAll("audio").forEach(a => {
-          if (a !== audio) a.pause();
-        });
-      };
-
-      trackListEl.appendChild(trackEl);
+    searchInput.addEventListener("input", () => {
+      renderTracks(currentGenre, searchInput.value);
     });
-  }
 
-  // Управление избранным
-  function toggleFavorite(id) {
-    if (favorites.includes(id)) {
-      favorites = favorites.filter(fav => fav !== id);
-    } else {
-      favorites.push(id);
+    function filterByGenre(genre) {
+      currentGenre = genre;
+      renderTracks(currentGenre, searchInput.value);
     }
-    localStorage.setItem(favoritesKey, JSON.stringify(favorites));
-    renderTracks();
-  }
 
-  // Фильтрация по жанру
-  function filterByGenre(genre) {
-    currentGenre = genre;
-    showingFavorites = false;
-    renderTracks();
-  }
+    toggleThemeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("light-theme");
+    });
 
-  // Показать избранное
-  function showFavorites() {
-    showingFavorites = true;
+    let currentGenre = "all";
     renderTracks();
-  }
 
-  // Поиск по названию
-  searchInput.addEventListener("input", e => {
-    currentSearch = e.target.value;
-    showingFavorites = false;
-    renderTracks();
-  });
+    // --- Чат ---
 
-  // Тема
-  function toggleTheme() {
-    const body = document.body;
-    if(body.classList.contains("light-theme")) {
-      body.classList.remove("light-theme");
-      localStorage.setItem(themeKey, "dark");
-    } else {
-      body.classList.add("light-theme");
-      localStorage.setItem(themeKey, "light");
+    const nicknameKey = "freeMusicAppNickname";
+    const chatHistoryKey = "freeMusicAppChatHistory";
+
+    const chatToggleBtn = document.getElementById("chatToggleBtn");
+    const chatModal = document.getElementById("chatModal");
+    const chatMessages = document.getElementById("chatMessages");
+    const chatInput = document.getElementById("chatInput");
+    const chatSendBtn = document.getElementById("chatSendBtn");
+
+    const nicknameModal = document.getElementById("nicknameModal");
+    const nicknameInput = document.getElementById("nicknameInput");
+    const nicknameSubmitBtn = document.getElementById("nicknameSubmitBtn");
+
+    let nickname = localStorage.getItem(nicknameKey) || null;
+    let chatHistory = JSON.parse(localStorage.getItem(chatHistoryKey)) || [];
+
+    function openChat() {
+      if (!nickname) {
+        nicknameModal.style.display = "flex";
+        nicknameInput.focus();
+      } else {
+        chatModal.style.display = "flex";
+        renderChatMessages();
+        chatInput.focus();
+      }
     }
-  }
-  // Применение темы из локального хранилища
-  function applyStoredTheme() {
-    const theme = localStorage.getItem(themeKey);
-    if(theme === "light") {
-      document.body.classList.add("light-theme");
-    } else {
-      document.body.classList.remove("light-theme");
-    }
-  }
 
-  // ==== Чат и авторизация ====
+    chatToggleBtn.addEventListener("click", () => {
+      if (chatModal.style.display === "flex") {
+        chatModal.style.display = "none";
+      } else {
+        openChat();
+      }
+    });
 
-  const chatToggleBtn = document.getElementById("chatToggleBtn");
-  const chatModal = document.getElementById("chatModal");
-  const chatMessages = document.getElementById("chatMessages");
-  const chatInput = document.getElementById("chatInput");
-  const chatSendBtn = document.getElementById("chatSendBtn");
-
-  const nicknameModal = document.getElementById("nicknameModal");
-  const nicknameInput = document.getElementById("nicknameInput");
-  const nicknameSubmitBtn = document.getElementById("nicknameSubmitBtn");
-
-  let nickname = localStorage.getItem(nicknameKey) || null;
-  let chatHistory = JSON.parse(localStorage.getItem(chatHistoryKey)) || [];
-
-  function openChat() {
-    if (!nickname) {
-      nicknameModal.style.display = "flex";
-    } else {
-      chatModal.style.display = "flex";
-      renderChatMessages();
-      chatInput.focus();
-    }
-  }
-
-  chatToggleBtn.addEventListener("click", () => {
-    if (chatModal.style.display === "flex") {
-      chatModal.style.display = "none";
-    } else {
+    nicknameSubmitBtn.addEventListener("click", () => {
+      const name = nicknameInput.value.trim();
+      if(name.length < 2) {
+        alert("Введите ник длиной минимум 2 символа");
+        return;
+      }
+      nickname = name;
+      localStorage.setItem(nicknameKey, nickname);
+      nicknameModal.style.display = "none";
       openChat();
-    }
-  });
-
-  nicknameSubmitBtn.addEventListener("click", () => {
-    const name = nicknameInput.value.trim();
-    if(name.length < 2) {
-      alert("Введите ник длиной минимум 2 символа");
-      return;
-    }
-    nickname = name;
-    localStorage.setItem(nicknameKey, nickname);
-    nicknameModal.style.display = "none";
-    openChat();
-  });
-
-  nicknameInput.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") {
-      nicknameSubmitBtn.click();
-    }
-  });
-
-  function renderChatMessages() {
-    chatMessages.innerHTML = "";
-    chatHistory.forEach(msg => {
-      const msgEl = document.createElement("div");
-      msgEl.className = "chat-message " + (msg.nickname === nickname ? "me" : "other");
-      msgEl.textContent = `${msg.nickname}: ${msg.text}`;
-      chatMessages.appendChild(msgEl);
     });
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
 
-  function sendMessage() {
-    const text = chatInput.value.trim();
-    if(text === "") return;
-    const msg = {nickname, text, time: Date.now()};
-    chatHistory.push(msg);
-    if(chatHistory.length > 100) chatHistory.shift(); // Ограничим до 100 сообщений
-    localStorage.setItem(chatHistoryKey, JSON.stringify(chatHistory));
-    chatInput.value = "";
-    renderChatMessages();
-  }
+    nicknameInput.addEventListener("keydown", (e) => {
+      if(e.key === "Enter") {
+        nicknameSubmitBtn.click();
+      }
+    });
 
-  chatSendBtn.addEventListener("click", sendMessage);
-  chatInput.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") {
-      sendMessage();
+    function renderChatMessages() {
+      chatMessages.innerHTML = "";
+      chatHistory.forEach(msg => {
+        const msgEl = document.createElement("div");
+        msgEl.className = "chat-message " + (msg.nickname === nickname ? "me" : "other");
+        msgEl.textContent = `${msg.nickname}: ${msg.text}`;
+        chatMessages.appendChild(msgEl);
+      });
+      chatMessages.scrollTop = chatMessages.scrollHeight;
     }
-  });
 
-  // При клике вне модалки ника - не закрывать (можно доработать)
-  nicknameModal.addEventListener("click", (e) => {
-    if(e.target === nicknameModal) {
-      // Можно не закрывать, чтобы ник всегда был введен
-    }
-  });
-
-  // --- Инициализация ---
-  applyStoredTheme();
-  renderTracks();
-</script>
-
-  <!-- Кнопка для открытия чата -->
-<button id="chatToggleBtn" title="Открыть чат">💬</button>
-
-<!-- Модалка для ника -->
-<div id="nicknameModal" style="display:none; flex-direction: column; justify-content: center; align-items: center;">
-  <div>
-    <h3>Введите ваш ник</h3>
-    <input id="nicknameInput" type="text" placeholder="Ник" />
-    <button id="nicknameSubmitBtn">Подтвердить</button>
-  </div>
-</div>
-
-<!-- Окно чата -->
-<div id="chatModal" style="display:none; flex-direction: column; justify-content: space-between; background:#222; padding:10px; width:300px; height:400px; position:fixed; bottom:80px; right:20px; border-radius:10px; box-shadow:0 0 10px #000; z-index: 10000;">
-  <div id="chatMessages" style="flex-grow:1; overflow-y:auto; margin-bottom:10px;"></div>
-  <input id="chatInput" type="text" placeholder="Введите сообщение..." style="width: calc(100% - 60px); padding: 6px;" />
-  <button id="chatSendBtn" style="width:50px;">▶️</button>
-</div>
-
-<script>
-  const nicknameKey = "freeMusicAppNickname";
-  const chatHistoryKey = "freeMusicAppChatHistory";
-
-  const chatToggleBtn = document.getElementById("chatToggleBtn");
-  const chatModal = document.getElementById("chatModal");
-  const chatMessages = document.getElementById("chatMessages");
-  const chatInput = document.getElementById("chatInput");
-  const chatSendBtn = document.getElementById("chatSendBtn");
-
-  const nicknameModal = document.getElementById("nicknameModal");
-  const nicknameInput = document.getElementById("nicknameInput");
-  const nicknameSubmitBtn = document.getElementById("nicknameSubmitBtn");
-
-  let nickname = localStorage.getItem(nicknameKey) || null;
-  let chatHistory = JSON.parse(localStorage.getItem(chatHistoryKey)) || [];
-
-  function openChat() {
-    if (!nickname) {
-      nicknameModal.style.display = "flex";
-      nicknameInput.focus();
-    } else {
-      chatModal.style.display = "flex";
+    function sendMessage() {
+      const text = chatInput.value.trim();
+      if(text === "") return;
+      const msg = {nickname, text, time: Date.now()};
+      chatHistory.push(msg);
+      if(chatHistory.length > 100) chatHistory.shift(); // максимум 100 сообщений
+      localStorage.setItem(chatHistoryKey, JSON.stringify(chatHistory));
+      chatInput.value = "";
       renderChatMessages();
-      chatInput.focus();
     }
-  }
 
-  chatToggleBtn.addEventListener("click", () => {
-    if (chatModal.style.display === "flex") {
-      chatModal.style.display = "none";
-    } else {
-      openChat();
-    }
-  });
-
-  nicknameSubmitBtn.addEventListener("click", () => {
-    const name = nicknameInput.value.trim();
-    if(name.length < 2) {
-      alert("Введите ник длиной минимум 2 символа");
-      return;
-    }
-    nickname = name;
-    localStorage.setItem(nicknameKey, nickname);
-    nicknameModal.style.display = "none";
-    openChat();
-  });
-
-  nicknameInput.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") {
-      nicknameSubmitBtn.click();
-    }
-  });
-
-  function renderChatMessages() {
-    chatMessages.innerHTML = "";
-    chatHistory.forEach(msg => {
-      const msgEl = document.createElement("div");
-      msgEl.className = "chat-message " + (msg.nickname === nickname ? "me" : "other");
-      msgEl.textContent = `${msg.nickname}: ${msg.text}`;
-      chatMessages.appendChild(msgEl);
+    chatSendBtn.addEventListener("click", sendMessage);
+    chatInput.addEventListener("keydown", (e) => {
+      if(e.key === "Enter") {
+        sendMessage();
+      }
     });
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
-  function sendMessage() {
-    const text = chatInput.value.trim();
-    if(text === "") return;
-    const msg = {nickname, text, time: Date.now()};
-    chatHistory.push(msg);
-    if(chatHistory.length > 100) chatHistory.shift();
-    localStorage.setItem(chatHistoryKey, JSON.stringify(chatHistory));
-    chatInput.value = "";
-    renderChatMessages();
-  }
-
-  chatSendBtn.addEventListener("click", sendMessage);
-  chatInput.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") {
-      sendMessage();
-    }
-  });
-</script>
-
-<style>
-  #chatToggleBtn {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    font-size: 28px;
-    cursor: pointer;
-    background: #282828;
-    border: none;
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    color: white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    z-index: 1000;
-  }
-  #chatToggleBtn:hover {
-    background: #444;
-  }
-  #nicknameModal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.8);
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-  }
-  #nicknameModal > div {
-    background: #222;
-    padding: 1rem;
-    border-radius: 8px;
-    width: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .chat-message {
-    margin: 0.2rem 0;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    max-width: 80%;
-    word-break: break-word;
-  }
-  .chat-message.me {
-    background: #0a8;
-    color: white;
-    align-self: flex-end;
-  }
-  .chat-message.other {
-    background: #444;
-    color: #eee;
-    align-self: flex-start;
-  }
-</style>
-  
+  </script>
 </body>
 </html>
