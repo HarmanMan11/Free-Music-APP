@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Музыка</title>
+  <title>Free Music App</title>
   <style>
     body {
       margin: 0;
@@ -11,6 +11,7 @@
       background-color: #121212;
       color: white;
       padding-bottom: 4rem;
+      transition: background-color 0.3s, color 0.3s;
     }
     header {
       background-color: #1f1f1f;
@@ -37,6 +38,7 @@
       outline: none;
       font-size: 1rem;
       cursor: pointer;
+      user-select: none;
     }
     .track-list {
       display: flex;
@@ -86,6 +88,7 @@
       color: #aaa;
       font-size: 0.9rem;
       min-width: 120px;
+      user-select: none;
     }
     #loadingIndicator {
       text-align: center;
@@ -110,191 +113,4 @@
     <button onclick="filterByGenre('lounge')">Лаунж</button>
     <button onclick="filterByGenre('electronic')">Электроника</button>
     <button onclick="filterByGenre('vintage')">Винтаж</button>
-    <button onclick="filterByGenre('ethno')">Этно</button>
-    <button onclick="filterByGenre('live')">Лайв</button>
-    <button onclick="showFavorites()">❤️ Избранное</button>
-    <button onclick="sortByTitle()">Сортировать по названию</button>
-    <button onclick="toggleTheme()">🌓 Тема</button>
-    <div id="trackCount"></div>
-  </div>
-
-  <div id="loadingIndicator"></div>
-  <div class="track-list" id="trackList"></div>
-
-  <div class="footer">
-    Made with ❤️ using archive.org open music
-  </div>
-
-  <script>
-    let musicTracks = [];
-
-    window.appState = window.appState || {
-      currentGenre: 'all',
-      favorites: JSON.parse(localStorage.getItem('favorites') || '[]')
-    };
-
-    function renderTracks(filter = '') {
-      const list = document.getElementById('trackList');
-      list.innerHTML = '';
-      const lowerFilter = filter.toLowerCase();
-
-      let filteredTracks = musicTracks.filter(t => (appState.currentGenre === 'all' || t.genre === appState.currentGenre));
-      if (filter) {
-        filteredTracks = filteredTracks.filter(t => t.title.toLowerCase().includes(lowerFilter));
-      }
-
-      document.getElementById('trackCount').textContent = `Найдено треков: ${filteredTracks.length}`;
-
-      filteredTracks.forEach((track, index) => {
-        const div = document.createElement('div');
-        div.className = 'track';
-
-        const liked = appState.favorites.includes(track.src);
-
-        div.innerHTML = `
-          <h3>${track.title}</h3>
-          <audio controls src="${track.src}"></audio>
-          <div class="like ${liked ? 'liked' : ''}" onclick="toggleLike('${track.src}', this)">❤️</div>
-        `;
-        list.appendChild(div);
-
-        const audio = div.querySelector('audio');
-        audio.onended = () => {
-          // Автопроигрывание следующего трека
-          if (index < filteredTracks.length - 1) {
-            const nextTrack = filteredTracks[index + 1];
-            audio.src = nextTrack.src;
-            audio.play();
-            // Подсветка следующего трека
-            const nextDiv = list.children[index + 1];
-            if (nextDiv) {
-              nextDiv.querySelector('audio').play();
-              // Можно добавить визуальное выделение
-            }
-          }
-        };
-      });
-    }
-
-    function filterByGenre(genre) {
-      appState.currentGenre = genre;
-      renderTracks(document.getElementById('search').value);
-    }
-
-    function toggleLike(src, el) {
-      if (appState.favorites.includes(src)) {
-        appState.favorites = appState.favorites.filter(f => f !== src);
-      } else {
-        appState.favorites.push(src);
-      }
-      localStorage.setItem('favorites', JSON.stringify(appState.favorites));
-      el.classList.toggle('liked');
-    }
-
-    function showFavorites() {
-      const list = document.getElementById('trackList');
-      list.innerHTML = '';
-
-      const favTracks = musicTracks.filter(t => appState.favorites.includes(t.src));
-      document.getElementById('trackCount').textContent = `Избранных треков: ${favTracks.length}`;
-
-      favTracks.forEach((track, index) => {
-        const div = document.createElement('div');
-        div.className = 'track';
-        div.innerHTML = `
-          <h3>${track.title}</h3>
-          <audio controls src="${track.src}"></audio>
-          <div class="like liked" onclick="toggleLike('${track.src}', this)">❤️</div>
-        `;
-        list.appendChild(div);
-
-        const audio = div.querySelector('audio');
-        audio.onended = () => {
-          if (index < favTracks.length - 1) {
-            const nextTrack = favTracks[index + 1];
-            audio.src = nextTrack.src;
-            audio.play();
-          }
-        };
-      });
-    }
-
-    function clearSearch() {
-      document.getElementById('search').value = '';
-      renderTracks('');
-    }
-
-    function sortByTitle() {
-      musicTracks.sort((a, b) => a.title.localeCompare(b.title));
-      renderTracks(document.getElementById('search').value);
-    }
-
-    function toggleTheme() {
-      const isDark = document.body.style.backgroundColor === 'white';
-      document.body.style.backgroundColor = isDark ? '#121212' : 'white';
-      document.body.style.color = isDark ? 'white' : '#121212';
-    }
-
-    async function loadTracks() {
-      const loading = document.getElementById('loadingIndicator');
-      loading.textContent = 'Загрузка треков...';
-      try {
-        const response = await fetch('tracks.json');
-        musicTracks = await response.json();
-        loading.textContent = '';
-        renderTracks();
-        runTests();
-      } catch (e) {
-        loading.textContent = 'Ошибка загрузки треков.';
-        console.error('Ошибка загрузки треков:', e);
-      }
-    }
-
-    function runTests() {
-      console.log('Запуск тестов...');
-
-      // Тест 1: фильтрация жанра 'classical'
-      appState.currentGenre = 'classical';
-      let filtered = musicTracks.filter(t => t.genre === appState.currentGenre);
-      if (filtered.length === 2 && filtered.every(t => t.genre === 'classical')) {
-        console.log('Тест 1 пройден: фильтрация классики');
-      } else {
-        console.error('Тест 1 провален');
-      }
-
-      // Тест 2: фильтрация жанра 'all' (все)
-      appState.currentGenre = 'all';
-      filtered = musicTracks.filter(t => appState.currentGenre === 'all' || t.genre === appState.currentGenre);
-      if (filtered.length === musicTracks.length) {
-        console.log('Тест 2 пройден: фильтрация всех треков');
-      } else {
-        console.error('Тест 2 провален');
-      }
-
-      // Тест 3: избранное - проверить что добавляется и удаляется
-      let testSrc = musicTracks[0]?.src || '';
-      if (!testSrc) {
-        console.warn('Нет треков для тестов избранного');
-        return;
-      }
-      appState.favorites = [];
-      toggleLike(testSrc, { classList: { toggle() {}, contains() { return false; } } });
-      if (appState.favorites.includes(testSrc)) {
-        console.log('Тест 3 пройден: добавление в избранное');
-      } else {
-        console.error('Тест 3 провален: добавление в избранное');
-      }
-      toggleLike(testSrc, { classList: { toggle() {}, contains() { return true; } } });
-      if (!appState.favorites.includes(testSrc)) {
-        console.log('Тест 4 пройден: удаление из избранного');
-      } else {
-        console.error('Тест 4 провален: удаление из избранного');
-      }
-    }
-
-    document.getElementById('search').addEventListener('input', (e) => {
-      renderTracks(e.target.value);
-    });
-
-   
-
+    <button onclick="fil
