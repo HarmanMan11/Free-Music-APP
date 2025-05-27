@@ -1,31 +1,26 @@
-const WebSocket = require('ws');
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 
-const wss = new WebSocket.Server({ port: 8080 });
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-let chatHistory = [];
+app.use(express.static('public'));
 
-wss.on('connection', (ws) => {
-  // Отправляем историю чата новому клиенту
-  ws.send(JSON.stringify({ type: 'history', data: chatHistory }));
+io.on('connection', socket => {
+  console.log('Пользователь подключился');
 
-  ws.on('message', (message) => {
-    try {
-      const msg = JSON.parse(message);
-      if(msg.type === 'message') {
-        chatHistory.push(msg.data);
-        if(chatHistory.length > 100) chatHistory.shift();
+  socket.on('chat message', msg => {
+    io.emit('chat message', msg); // Шлём всем
+  });
 
-        // Рассылаем всем подключенным клиентам
-        wss.clients.forEach(client => {
-          if(client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({ type: 'message', data: msg.data }));
-          }
-        });
-      }
-    } catch(e) {
-      console.error('Invalid message', e);
-    }
+  socket.on('disconnect', () => {
+    console.log('Пользователь отключился');
   });
 });
 
-console.log('WebSocket сервер запущен на ws://localhost:8080');
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Сервер запущен на http://localhost:${PORT}`);
+});
