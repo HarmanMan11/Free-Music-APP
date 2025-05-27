@@ -106,11 +106,224 @@
   </header>
 
   <div class="controls">
-    <input id="search" type="text" placeholder="Поиск трека..." />
+    <input id="search" type="text" placeholder="Поиск трека..." oninput="renderTracks(this.value)" />
     <button onclick="clearSearch()">Очистить</button>
     <button onclick="filterByGenre('all')">Все</button>
     <button onclick="filterByGenre('classical')">Классика</button>
     <button onclick="filterByGenre('lounge')">Лаунж</button>
     <button onclick="filterByGenre('electronic')">Электроника</button>
     <button onclick="filterByGenre('vintage')">Винтаж</button>
-    <button onclick="fil
+    <button onclick="filterByGenre('ethno')">Этно</button>
+    <button onclick="filterByGenre('live')">Лайв</button>
+    <button onclick="showFavorites()">❤️ Избранное</button>
+    <button onclick="sortByTitle()">Сортировать по названию</button>
+    <button id="themeToggleBtn" onclick="toggleTheme()">🌓 Тема</button>
+    <div id="trackCount"></div>
+  </div>
+
+  <div id="loadingIndicator"></div>
+  <div class="track-list" id="trackList"></div>
+
+  <div class="footer">
+    Made with ❤️ using archive.org open music
+  </div>
+
+  <script>
+    // Исходные данные треков
+    const musicTracks = [
+      {
+        title: "Sonatina in C major",
+        src: "https://archive.org/download/MozartSonatinaInCMajor/MozartSonatinaInCMajor.mp3",
+        genre: "classical"
+      },
+      {
+        title: "Lounge Relaxation",
+        src: "https://archive.org/download/LoungeRelaxation_201407/LoungeRelaxation.mp3",
+        genre: "lounge"
+      },
+      {
+        title: "Electronic Vibes",
+        src: "https://archive.org/download/electronicvibes_201812/electronicvibes.mp3",
+        genre: "electronic"
+      },
+      {
+        title: "Vintage Jazz",
+        src: "https://archive.org/download/vintagejazz_202001/vintagejazz.mp3",
+        genre: "vintage"
+      },
+      {
+        title: "Ethno Beats",
+        src: "https://archive.org/download/ethnobeats_201904/ethnobeats.mp3",
+        genre: "ethno"
+      },
+      {
+        title: "Live Concert",
+        src: "https://archive.org/download/liveconcert_202003/liveconcert.mp3",
+        genre: "live"
+      }
+    ];
+
+    window.appState = {
+      currentGenre: 'all',
+      favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
+      isShowingFavorites: false,
+      sortedAsc: true
+    };
+
+    let filteredTracksCache = [];
+    let currentPlayingIndex = -1;
+
+    function renderTracks(filter = '') {
+      const list = document.getElementById('trackList');
+      list.innerHTML = '';
+      const lowerFilter = filter.toLowerCase();
+
+      // Выбираем какие треки показывать
+      let tracksToRender = [];
+
+      if (appState.isShowingFavorites) {
+        tracksToRender = musicTracks.filter(t => appState.favorites.includes(t.src));
+      } else {
+        tracksToRender = musicTracks.filter(t => appState.currentGenre === 'all' || t.genre === appState.currentGenre);
+      }
+
+      if (filter) {
+        tracksToRender = tracksToRender.filter(t => t.title.toLowerCase().includes(lowerFilter));
+      }
+
+      filteredTracksCache = tracksToRender;
+
+      document.getElementById('trackCount').textContent = `Найдено треков: ${tracksToRender.length}`;
+
+      if (tracksToRender.length === 0) {
+        list.innerHTML = '<p style="text-align:center; color:#888;">Треки не найдены.</p>';
+        return;
+      }
+
+      tracksToRender.forEach((track, index) => {
+        const div = document.createElement('div');
+        div.className = 'track';
+
+        const liked = appState.favorites.includes(track.src);
+
+        div.innerHTML = `
+          <h3>${track.title}</h3>
+          <audio controls src="${track.src}"></audio>
+          <div class="like ${liked ? 'liked' : ''}" title="Добавить в избранное">❤️</div>
+        `;
+
+        list.appendChild(div);
+
+        const audio = div.querySelector('audio');
+        const likeBtn = div.querySelector('.like');
+
+        // Лайк
+        likeBtn.onclick = () => toggleLike(track.src, likeBtn);
+
+        // Когда начинается проигрывание — ставим текущий индекс, ставим на паузу другие
+        audio.onplay = () => {
+          currentPlayingIndex = index;
+          pauseOtherAudios(index);
+        };
+
+        // Автоплей следующего трека
+        audio.onended = () => {
+          playNextTrack();
+        };
+      });
+    }
+
+    // Остановить все аудио кроме указанного индекса
+    function pauseOtherAudios(exceptIndex) {
+      const audios = document.querySelectorAll('#trackList audio');
+      audios.forEach((audio, idx) => {
+        if (idx !== exceptIndex) {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+      });
+    }
+
+    // Автоматически проигрываем следующий трек, если есть
+    function playNextTrack() {
+      if (currentPlayingIndex < 0) return;
+      const nextIndex = currentPlayingIndex + 1;
+      if (nextIndex < filteredTracksCache.length) {
+        const audios = document.querySelectorAll('#trackList audio');
+        const nextAudio = audios[nextIndex];
+        if (nextAudio) {
+          nextAudio.play();
+          currentPlayingIndex = nextIndex;
+        }
+      }
+    }
+
+    // Фильтрация по жанру
+    function filterByGenre(genre) {
+      appState.currentGenre = genre;
+      appState.isShowingFavorites = false;
+      document.getElementById('search').value = '';
+      renderTracks();
+    }
+
+    // Очистка поиска
+    function clearSearch() {
+      document.getElementById('search').value = '';
+      renderTracks();
+    }
+
+    // Лайк / дизлайк
+    function toggleLike(src, el) {
+      if (appState.favorites.includes(src)) {
+        appState.favorites = appState.favorites.filter(f => f !== src);
+        el.classList.remove('liked');
+      } else {
+        appState.favorites.push(src);
+        el.classList.add('liked');
+      }
+      localStorage.setItem('favorites', JSON.stringify(appState.favorites));
+    }
+
+    // Показать только избранное
+    function showFavorites() {
+      appState.isShowingFavorites = true;
+      appState.currentGenre = 'all';
+      document.getElementById('search').value = '';
+      renderTracks();
+    }
+
+    // Сортировка по названию (переключатель)
+    function sortByTitle() {
+      appState.sortedAsc = !appState.sortedAsc;
+      musicTracks.sort((a, b) => {
+        if (a.title.toLowerCase() < b.title.toLowerCase()) return appState.sortedAsc ? -1 : 1;
+        if (a.title.toLowerCase() > b.title.toLowerCase()) return appState.sortedAsc ? 1 : -1;
+        return 0;
+      });
+      renderTracks(document.getElementById('search').value);
+    }
+
+    // Темная / светлая тема
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.getElementById('themeToggleBtn');
+      if (body.style.backgroundColor === 'white') {
+        // Вернуть темную
+        body.style.backgroundColor = '#121212';
+        body.style.color = 'white';
+        btn.textContent = '🌓 Тема';
+      } else {
+        // Светлая
+        body.style.backgroundColor = 'white';
+        body.style.color = 'black';
+        btn.textContent = '🌙 Тема';
+      }
+    }
+
+    // Инициализация
+    window.onload = () => {
+      renderTracks();
+    };
+  </script>
+</body>
+</html>
