@@ -678,5 +678,164 @@
   renderTracks();
 </script>
 
+  <!-- Кнопка для открытия чата -->
+<button id="chatToggleBtn" title="Открыть чат">💬</button>
+
+<!-- Модалка для ника -->
+<div id="nicknameModal" style="display:none; flex-direction: column; justify-content: center; align-items: center;">
+  <div>
+    <h3>Введите ваш ник</h3>
+    <input id="nicknameInput" type="text" placeholder="Ник" />
+    <button id="nicknameSubmitBtn">Подтвердить</button>
+  </div>
+</div>
+
+<!-- Окно чата -->
+<div id="chatModal" style="display:none; flex-direction: column; justify-content: space-between; background:#222; padding:10px; width:300px; height:400px; position:fixed; bottom:80px; right:20px; border-radius:10px; box-shadow:0 0 10px #000; z-index: 10000;">
+  <div id="chatMessages" style="flex-grow:1; overflow-y:auto; margin-bottom:10px;"></div>
+  <input id="chatInput" type="text" placeholder="Введите сообщение..." style="width: calc(100% - 60px); padding: 6px;" />
+  <button id="chatSendBtn" style="width:50px;">▶️</button>
+</div>
+
+<script>
+  const nicknameKey = "freeMusicAppNickname";
+  const chatHistoryKey = "freeMusicAppChatHistory";
+
+  const chatToggleBtn = document.getElementById("chatToggleBtn");
+  const chatModal = document.getElementById("chatModal");
+  const chatMessages = document.getElementById("chatMessages");
+  const chatInput = document.getElementById("chatInput");
+  const chatSendBtn = document.getElementById("chatSendBtn");
+
+  const nicknameModal = document.getElementById("nicknameModal");
+  const nicknameInput = document.getElementById("nicknameInput");
+  const nicknameSubmitBtn = document.getElementById("nicknameSubmitBtn");
+
+  let nickname = localStorage.getItem(nicknameKey) || null;
+  let chatHistory = JSON.parse(localStorage.getItem(chatHistoryKey)) || [];
+
+  function openChat() {
+    if (!nickname) {
+      nicknameModal.style.display = "flex";
+      nicknameInput.focus();
+    } else {
+      chatModal.style.display = "flex";
+      renderChatMessages();
+      chatInput.focus();
+    }
+  }
+
+  chatToggleBtn.addEventListener("click", () => {
+    if (chatModal.style.display === "flex") {
+      chatModal.style.display = "none";
+    } else {
+      openChat();
+    }
+  });
+
+  nicknameSubmitBtn.addEventListener("click", () => {
+    const name = nicknameInput.value.trim();
+    if(name.length < 2) {
+      alert("Введите ник длиной минимум 2 символа");
+      return;
+    }
+    nickname = name;
+    localStorage.setItem(nicknameKey, nickname);
+    nicknameModal.style.display = "none";
+    openChat();
+  });
+
+  nicknameInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") {
+      nicknameSubmitBtn.click();
+    }
+  });
+
+  function renderChatMessages() {
+    chatMessages.innerHTML = "";
+    chatHistory.forEach(msg => {
+      const msgEl = document.createElement("div");
+      msgEl.className = "chat-message " + (msg.nickname === nickname ? "me" : "other");
+      msgEl.textContent = `${msg.nickname}: ${msg.text}`;
+      chatMessages.appendChild(msgEl);
+    });
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function sendMessage() {
+    const text = chatInput.value.trim();
+    if(text === "") return;
+    const msg = {nickname, text, time: Date.now()};
+    chatHistory.push(msg);
+    if(chatHistory.length > 100) chatHistory.shift();
+    localStorage.setItem(chatHistoryKey, JSON.stringify(chatHistory));
+    chatInput.value = "";
+    renderChatMessages();
+  }
+
+  chatSendBtn.addEventListener("click", sendMessage);
+  chatInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") {
+      sendMessage();
+    }
+  });
+</script>
+
+<style>
+  #chatToggleBtn {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    background: #282828;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+  }
+  #chatToggleBtn:hover {
+    background: #444;
+  }
+  #nicknameModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  #nicknameModal > div {
+    background: #222;
+    padding: 1rem;
+    border-radius: 8px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .chat-message {
+    margin: 0.2rem 0;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    max-width: 80%;
+    word-break: break-word;
+  }
+  .chat-message.me {
+    background: #0a8;
+    color: white;
+    align-self: flex-end;
+  }
+  .chat-message.other {
+    background: #444;
+    color: #eee;
+    align-self: flex-start;
+  }
+</style>
+  
 </body>
 </html>
