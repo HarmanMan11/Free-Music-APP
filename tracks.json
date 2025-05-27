@@ -1,0 +1,9 @@
+[
+  { "title": "Beethoven - Symphony No.5", "src": "https://archive.org/download/BeethovenSymphony5/BeethovenSymphony5.mp3", "genre": "classical" },
+  { "title": "Chopin - Prelude No.15", "src": "https://archive.org/download/Chopin_Prelude_No_15/Chopin_Prelude_No_15.mp3", "genre": "classical" },
+  { "title": "Electronic Breeze", "src": "https://archive.org/download/electronic_beats/electronic_breeze.mp3", "genre": "electronic" },
+  { "title": "Lounge Cafe", "src": "https://archive.org/download/lounge_collection/lounge_cafe.mp3", "genre": "lounge" },
+  { "title": "Vintage Jazz", "src": "https://archive.org/download/vintage_jazz/vintage_jazz_01.mp3", "genre": "vintage" },
+  { "title": "Ethno Vibes", "src": "https://archive.org/download/ethno_collection/ethno_vibes.mp3", "genre": "ethno" },
+  { "title": "Live Session A", "src": "https://archive.org/download/live_music_a/live_session_a.mp3", "genre": "live" }
+]
