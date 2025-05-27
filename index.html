@@ -1,380 +1,332 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Free Music App</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Free Music App</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
-  body {
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    color: #f0f0f0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    transition: background 0.5s ease;
-  }
-  header {
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 1.8rem 1rem;
-    text-align: center;
-    box-shadow: 0 8px 15px rgba(0, 255, 136, 0.4);
-    backdrop-filter: blur(8px);
-  }
-  header h1 {
-    margin: 0;
-    font-weight: 700;
-    font-size: 2.4rem;
-    color: #00ff88;
-    letter-spacing: 1.3px;
-    text-shadow: 0 0 8px #00ff88;
-  }
-  .controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    justify-content: center;
-    padding: 1rem 1rem 1.5rem;
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(6px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    border-radius: 0 0 20px 20px;
-  }
-  .controls input[type="search"] {
-    flex-grow: 1;
-    max-width: 320px;
-    padding: 0.7rem 1.2rem;
-    border-radius: 50px;
-    border: none;
-    font-size: 1rem;
-    outline: none;
-    box-shadow: inset 0 0 10px rgba(0, 255, 136, 0.3);
-    color: #d4ffd4;
-    background-color: rgba(0, 0, 0, 0.25);
-    transition: background-color 0.3s ease;
-  }
-  .controls input[type="search"]:focus {
-    background-color: rgba(0, 255, 136, 0.15);
-  }
-  .controls button {
-    background: linear-gradient(135deg, #00ff88, #00cc66);
-    border: none;
-    padding: 0.55rem 1.6rem;
-    border-radius: 30px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 1rem;
-    color: #012a0f;
-    box-shadow: 0 4px 8px #00cc66aa;
-    transition: all 0.3s ease;
-    user-select: none;
-    text-shadow: 0 1px 1px rgba(255 255 255 / 0.3);
-  }
-  .controls button:hover,
-  .controls button:focus {
-    background: linear-gradient(135deg, #00cc66, #009933);
-    box-shadow: 0 6px 15px #00ff88cc;
-    outline: none;
-    transform: translateY(-2px);
-  }
-  #trackList {
-    flex-grow: 1;
-    padding: 2rem 1rem 3rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.3rem;
-    max-width: 720px;
-    margin: 0 auto 2rem auto;
-  }
-  .track {
-    background: linear-gradient(135deg, #222, #1a3a2a);
-    padding: 1.3rem 1.5rem;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
-    position: relative;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .track:hover {
-    transform: scale(1.03);
-    box-shadow: 0 8px 25px rgba(0, 255, 136, 0.65);
-  }
-  .track h3 {
-    margin: 0 0 0.6rem 0;
-    font-weight: 700;
-    color: #a6ffd1;
-    letter-spacing: 0.04em;
-    user-select: none;
-    text-shadow: 0 0 6px #00ff88;
-  }
-  audio {
-    width: 100%;
-    outline: none;
-    border-radius: 10px;
-    filter: drop-shadow(0 2px 3px rgba(0, 255, 136, 0.3));
-    cursor: pointer;
-  }
-  .like {
-    position: absolute;
-    top: 1.1rem;
-    right: 1.3rem;
-    cursor: pointer;
-    font-size: 1.9rem;
-    user-select: none;
-    transition: color 0.3s ease, transform 0.3s ease;
-    color: #28a745aa;
-    filter: drop-shadow(0 0 2px #28a745cc);
-  }
-  .like:hover {
-    color: #00ff88;
-    transform: scale(1.2);
-  }
-  .like.liked {
-    color: #ff4081;
-    filter: drop-shadow(0 0 8px #ff4081cc);
-  }
-  .like.liked:hover {
-    color: #ff79a3;
-    transform: scale(1.3);
-  }
-  footer {
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 1.2rem;
-    font-size: 0.9rem;
-    color: #88ffaa;
-    text-align: center;
-    user-select: none;
-    backdrop-filter: blur(8px);
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    box-shadow: 0 -5px 15px rgba(0, 255, 136, 0.3);
-  }
-  /* Light theme override */
-  body.light {
-    background: linear-gradient(135deg, #f0f0f0, #a0e5a0);
-    color: #222;
-  }
-  body.light header {
-    background-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 8px 15px #88cc88;
-    color: #007700;
-  }
-  body.light .controls {
-    background-color: rgba(255, 255, 255, 0.75);
-    box-shadow: 0 2px 10px #99cc9999;
-  }
-  body.light .controls input[type="search"] {
-    color: #222;
-    background-color: rgba(255, 255, 255, 0.85);
-    box-shadow: inset 0 0 8px #66bb6633;
-  }
-  body.light .controls input[type="search"]:focus {
-    background-color: #d0f0d0;
-  }
-  body.light .controls button {
-    background: linear-gradient(135deg, #55aa55, #339933);
-    color: #e6ffe6;
-    box-shadow: 0 4px 8px #339933aa;
-    text-shadow: 0 0 4px #00000066;
-  }
-  body.light .controls button:hover,
-  body.light .controls button:focus {
-    background: linear-gradient(135deg, #339933, #117711);
-    box-shadow: 0 6px 15px #44ff4488;
-    color: #bbffbb;
-  }
-  body.light #trackList {
-    max-width: 720px;
-  }
-  body.light .track {
-    background: linear-gradient(135deg, #d7ffd7, #a4e2a4);
-    color: #225522;
-    box-shadow: 0 5px 15px #88cc8855;
-  }
-  body.light .track:hover {
-    box-shadow: 0 8px 25px #77bb7755;
-  }
-  body.light .track h3 {
-    color: #145214;
-    text-shadow: none;
-  }
-  body.light audio {
-    filter: none;
-  }
-  body.light .like {
-    color: #228822cc;
-    filter: none;
-  }
-  body.light .like:hover {
-    color: #006600;
-  }
-  body.light .like.liked {
-    color: #bb0055;
-    filter: none;
-  }
-  body.light footer {
-    background-color: rgba(255, 255, 255, 0.8);
-    color: #336633;
-    box-shadow: 0 -5px 15px #99cc9977;
-  }
-</style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #121212;
+      color: #eee;
+      padding-bottom: 4rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    header {
+      background-color: #1f1f1f;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.7);
+    }
+
+    header h1 {
+      margin: 0;
+      font-weight: 700;
+      color: #00ff88;
+      font-size: 2rem;
+      user-select: none;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1rem;
+      background-color: #1a1a1a;
+      box-shadow: inset 0 -1px 3px rgba(0,0,0,0.5);
+      user-select: none;
+    }
+
+    .controls input[type="text"] {
+      padding: 0.5rem 1rem;
+      border-radius: 25px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      width: 220px;
+      background-color: #2a2a2a;
+      color: #ddd;
+      transition: background-color 0.3s;
+    }
+    .controls input[type="text"]:focus {
+      background-color: #3a3a3a;
+      box-shadow: 0 0 8px #00ff88;
+      color: white;
+    }
+
+    .controls button {
+      background: linear-gradient(45deg, #00ff88, #00cc66);
+      border: none;
+      padding: 0.6rem 1.3rem;
+      border-radius: 25px;
+      font-weight: 600;
+      color: #121212;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,255,136,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      user-select: none;
+    }
+    .controls button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 10px rgba(0,255,136,0.7);
+    }
+
+    .track-list {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      max-width: 700px;
+      margin: 0 auto 4rem;
+    }
+
+    .track {
+      background: #222;
+      padding: 1.25rem 1.5rem;
+      border-radius: 15px;
+      width: 100%;
+      box-shadow: 0 3px 10px rgba(0,255,136,0.3);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: background-color 0.3s;
+    }
+
+    .track:hover {
+      background-color: #2f4f3f;
+    }
+
+    .track h3 {
+      margin: 0;
+      font-weight: 700;
+      color: #00ff88;
+      font-size: 1.2rem;
+      user-select: none;
+    }
+
+    audio {
+      width: 100%;
+      outline: none;
+      border-radius: 8px;
+      background-color: #1f1f1f;
+    }
+
+    .like {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 1.8rem;
+      cursor: pointer;
+      user-select: none;
+      color: #888;
+      transition: color 0.3s;
+      filter: drop-shadow(0 0 1px #000);
+    }
+    .like.liked {
+      color: #ff4081;
+      filter: drop-shadow(0 0 4px #ff4081);
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #1f1f1f;
+      padding: 1rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+      user-select: none;
+      box-shadow: inset 0 1px 3px rgba(255,255,255,0.1);
+    }
+
+    /* Dark/Light toggle */
+    body.light {
+      background-color: #f4f4f4;
+      color: #222;
+    }
+    body.light header {
+      background-color: #e0e0e0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    body.light .controls {
+      background-color: #d7d7d7;
+      box-shadow: inset 0 -1px 3px rgba(255,255,255,0.7);
+    }
+    body.light .controls input[type="text"] {
+      background-color: #fff;
+      color: #222;
+    }
+    body.light .controls input[type="text"]:focus {
+      background-color: #eee;
+      box-shadow: 0 0 8px #00aa55;
+      color: #111;
+    }
+    body.light .controls button {
+      background: linear-gradient(45deg, #00cc66, #009944);
+      color: #f4f4f4;
+      box-shadow: 0 4px 6px rgba(0,204,102,0.6);
+    }
+    body.light .controls button:hover {
+      box-shadow: 0 6px 10px rgba(0,204,102,0.9);
+    }
+    body.light .track {
+      background-color: #fff;
+      color: #222;
+      box-shadow: 0 3px 10px rgba(0,170,85,0.2);
+    }
+    body.light .track:hover {
+      background-color: #d6f5d6;
+    }
+    body.light .track h3 {
+      color: #008833;
+    }
+    body.light audio {
+      background-color: #eee;
+    }
+    body.light .like {
+      color: #aaa;
+      filter: none;
+    }
+    body.light .like.liked {
+      color: #d81b60;
+      filter: drop-shadow(0 0 4px #d81b60);
+    }
+    body.light .footer {
+      background: #e0e0e0;
+      color: #444;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+  </style>
 </head>
 <body>
 
-<header>
-  <h1>🎵 Free Music App</h1>
-</header>
+  <header>
+    <h1>🎵 Free Music App</h1>
+  </header>
 
-<div class="controls">
-  <input type="search" id="search" placeholder="Поиск трека..." autocomplete="off" />
-  <button data-genre="all" aria-label="Показать все треки">Все</button>
-  <button data-genre="classical" aria-label="Показать классическую музыку">Классика</button>
-  <button data-genre="lounge" aria-label="Показать лаунж">Лаунж</button>
-  <button data-genre="electronic" aria-label="Показать электронику">Электроника</button>
-  <button data-genre="vintage" aria-label="Показать винтаж">Винтаж</button>
-  <button data-genre="ethno" aria-label="Показать этно">Этно</button>
-  <button data-genre="live" aria-label="Показать лайв">Лайв</button>
-  <button id="showFavoritesBtn" aria-pressed="false" aria-label="Показать избранное">❤️ Избранное</button>
-  <button id="toggleThemeBtn" aria-label="Переключить тему">🌓 Тема</button>
-</div>
+  <div class="controls">
+    <input id="search" type="text" placeholder="Поиск трека..." aria-label="Поиск трека" />
+    <button onclick="filterByGenre('all')">Все</button>
+    <button onclick="filterByGenre('classical')">Классика</button>
+    <button onclick="filterByGenre('lounge')">Лаунж</button>
+    <button onclick="filterByGenre('electronic')">Электроника</button>
+    <button onclick="filterByGenre('vintage')">Винтаж</button>
+    <button onclick="filterByGenre('ethno')">Этно</button>
+    <button onclick="filterByGenre('live')">Лайв</button>
+    <button onclick="showFavorites()">❤️ Избранное</button>
+    <button onclick="toggleTheme()">🌓 Тема</button>
+  </div>
 
-<div id="trackList" role="list" aria-live="polite" aria-label="Список музыкальных треков"></div>
+  <main class="track-list" id="trackList" role="list"></main>
 
-<footer>
-  Made with ❤️ using archive.org open music
-</footer>
+  <footer class="footer">
+    Made with ❤️ using archive.org open music
+  </footer>
 
-<script>
-(() => {
-  const tracks = [
-    { title: "Beethoven - Symphony No.5", src: "https://archive.org/download/BeethovenSymphony5/BeethovenSymphony5.mp3", genre: "classical" },
-    { title: "Chopin - Prelude No.15", src: "https://archive.org/download/Chopin_Prelude_No_15/Chopin_Prelude_No_15.mp3", genre: "classical" },
-    { title: "Electronic Breeze", src: "https://archive.org/download/electronic_beats/electronic_breeze.mp3", genre: "electronic" },
-    { title: "Lounge Cafe", src: "https://archive.org/download/lounge_collection/lounge_cafe.mp3", genre: "lounge" },
-    { title: "Vintage Jazz", src: "https://archive.org/download/vintage_jazz/vintage_jazz_01.mp3", genre: "vintage" },
-    { title: "Ethno Vibes", src: "https://archive.org/download/ethno_collection/ethno_vibes.mp3", genre: "ethno" },
-    { title: "Live Session A", src: "https://archive.org/download/live_music_a/live_session_a.mp3", genre: "live" },
-  ];
+  <script>
+    const tracks = [
+      { title: "Beethoven - Symphony No.5", src: "https://archive.org/download/Beethoven_5th_Symphony_128kb/Beethoven_5th_Symphony_128kb.mp3", genre: "classical" },
+      { title: "Chopin - Prelude No.15", src: "https://archive.org/download/Chopin_Prelude_Op28_No15/Chopin_Prelude_Op28_No15.mp3", genre: "classical" },
+      { title: "Electronic Breeze", src: "https://archive.org/download/LoFi_Lounge_Music_2021/LoFi_Lounge_Music_2021.mp3", genre: "electronic" },
+      { title: "Lounge Cafe", src: "https://archive.org/download/lounge-ambience/Lounge_Ambience.mp3", genre: "lounge" },
+      { title: "Vintage Jazz", src: "https://archive.org/download/vintage_jazz/vintage_jazz_01.mp3", genre: "vintage" },
+      { title: "Ethno Vibes", src: "https://archive.org/download/ethno_collection/ethno_vibes.mp3", genre: "ethno" },
+      { title: "Live Session A", src: "https://archive.org/download/live_music_a/live_session_a.mp3", genre: "live" },
+    ];
 
-  let appState = {
-    currentGenre: 'all',
-    favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
-    showingFavorites: false,
-  };
+    window.appState = window.appState || {
+      currentGenre: 'all',
+      favorites: JSON.parse(localStorage.getItem('favorites') || '[]')
+    };
 
-  const trackListEl = document.getElementById('trackList');
-  const searchInput = document.getElementById('search');
-  const showFavoritesBtn = document.getElementById('showFavoritesBtn');
-  const toggleThemeBtn = document.getElementById('toggleThemeBtn');
-  const genreButtons = document.querySelectorAll('.controls button[data-genre]');
+    function renderTracks(filter = '') {
+      const list = document.getElementById('trackList');
+      list.innerHTML = '';
+      const lowerFilter = filter.toLowerCase();
 
-  function saveFavorites() {
-    localStorage.setItem('favorites', JSON.stringify(appState.favorites));
-  }
-
-  function isFavorite(src) {
-    return appState.favorites.includes(src);
-  }
-
-  function toggleLike(src, el) {
-    if (isFavorite(src)) {
-      appState.favorites = appState.favorites.filter(f => f !== src);
-      el.classList.remove('liked');
-      el.setAttribute('aria-pressed', 'false');
-    } else {
-      appState.favorites.push(src);
-      el.classList.add('liked');
-      el.setAttribute('aria-pressed', 'true');
-    }
-    saveFavorites();
-  }
-
-  function createTrackElement(track) {
-    const div = document.createElement('div');
-    div.className = 'track';
-    div.setAttribute('role', 'listitem');
-    div.tabIndex = 0;
-    div.innerHTML = `
-      <h3>${track.title}</h3>
-      <audio controls src="${track.src}"></audio>
-      <button class="like" aria-label="Добавить или убрать из избранного" aria-pressed="${isFavorite(track.src) ? 'true' : 'false'}">❤️</button>
-    `;
-    const likeEl = div.querySelector('.like');
-    likeEl.addEventListener('click', () => toggleLike(track.src, likeEl));
-    return div;
-  }
-
-  function renderTracks() {
-    trackListEl.innerHTML = '';
-
-    let filteredTracks;
-
-    if (appState.showingFavorites) {
-      filteredTracks = tracks.filter(t => isFavorite(t.src));
-    } else {
-      filteredTracks = tracks.filter(t => appState.currentGenre === 'all' || t.genre === appState.currentGenre);
-      const searchVal = searchInput.value.trim().toLowerCase();
-      if (searchVal) {
-        filteredTracks = filteredTracks.filter(t => t.title.toLowerCase().includes(searchVal));
+      let filteredTracks = tracks.filter(t => (appState.currentGenre === 'all' || t.genre === appState.currentGenre));
+      if (filter) {
+        filteredTracks = filteredTracks.filter(t => t.title.toLowerCase().includes(lowerFilter));
       }
+
+      if (filteredTracks.length === 0) {
+        list.innerHTML = '<p style="text-align:center; color:#888;">Треки не найдены.</p>';
+        return;
+      }
+
+      filteredTracks.forEach(track => {
+        const div = document.createElement('div');
+        div.className = 'track';
+
+        const liked = appState.favorites.includes(track.src);
+
+        div.innerHTML = `
+          <h3>${track.title}</h3>
+          <audio controls preload="none" src="${track.src}"></audio>
+          <div class="like ${liked ? 'liked' : ''}" title="${liked ? 'Удалить из избранного' : 'Добавить в избранное'}" onclick="toggleLike('${track.src}', this)">❤️</div>
+        `;
+        list.appendChild(div);
+      });
     }
 
-    if (filteredTracks.length === 0) {
-      trackListEl.textContent = 'Треков не найдено.';
-      return;
+    function filterByGenre(genre) {
+      appState.currentGenre = genre;
+      renderTracks(document.getElementById('search').value);
     }
 
-    filteredTracks.forEach(track => {
-      trackListEl.appendChild(createTrackElement(track));
+    function toggleLike(src, el) {
+      if (appState.favorites.includes(src)) {
+        appState.favorites = appState.favorites.filter(f => f !== src);
+        el.classList.remove('liked');
+      } else {
+        appState.favorites.push(src);
+        el.classList.add('liked');
+      }
+      localStorage.setItem('favorites', JSON.stringify(appState.favorites));
+    }
+
+    function showFavorites() {
+      const list = document.getElementById('trackList');
+      list.innerHTML = '';
+
+      const favTracks = tracks.filter(t => appState.favorites.includes(t.src));
+      if (favTracks.length === 0) {
+        list.innerHTML = '<p style="text-align:center; color:#888;">Избранные треки не найдены.</p>';
+        return;
+      }
+
+      favTracks.forEach(track => {
+        const div = document.createElement('div');
+        div.className = 'track';
+        div.innerHTML = `
+          <h3>${track.title}</h3>
+          <audio controls preload="none" src="${track.src}"></audio>
+          <div class="like liked" title="Удалить из избранного" onclick="toggleLike('${track.src}', this)">❤️</div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    document.getElementById('search').addEventListener('input', (e) => {
+      renderTracks(e.target.value);
     });
-  }
 
-  function setGenre(genre) {
-    appState.currentGenre = genre;
-    appState.showingFavorites = false;
-    showFavoritesBtn.textContent = '❤️ Избранное';
-    showFavoritesBtn.setAttribute('aria-pressed', 'false');
+    function toggleTheme() {
+      document.body.classList.toggle('light');
+    }
+
+    // Инициализация:
     renderTracks();
-  }
-
-  function toggleFavoritesView() {
-    appState.showingFavorites = !appState.showingFavorites;
-    showFavoritesBtn.textContent = appState.showingFavorites ? '⬅️ Все треки' : '❤️ Избранное';
-    showFavoritesBtn.setAttribute('aria-pressed', appState.showingFavorites ? 'true' : 'false');
-    renderTracks();
-  }
-
-  function toggleTheme() {
-    const isLight = document.body.classList.toggle('light');
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
-  }
-
-  // Ивенты
-  searchInput.addEventListener('input', () => {
-    appState.showingFavorites = false;
-    showFavoritesBtn.textContent = '❤️ Избранное';
-    showFavoritesBtn.setAttribute('aria-pressed', 'false');
-    renderTracks();
-  });
-
-  genreButtons.forEach(btn => {
-    btn.addEventListener('click', () => setGenre(btn.dataset.genre));
-  });
-
-  showFavoritesBtn.addEventListener('click', toggleFavoritesView);
-  toggleThemeBtn.addEventListener('click', toggleTheme);
-
-  // Загрузка темы из localStorage
-  if(localStorage.getItem('theme') === 'light') {
-    document.body.classList.add('light');
-  }
-
-  // Рендер по умолчанию
-  renderTracks();
-})();
-</script>
-
+  </script>
 </body>
 </html>
