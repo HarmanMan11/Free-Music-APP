@@ -6,60 +6,186 @@
   <title>Free Music App</title>
   <style>
     body {
-      background: #1e1e1e;
-      color: white;
-      font-family: sans-serif;
       margin: 0;
-      padding: 2rem;
+      font-family: sans-serif;
+      background-color: #121212;
+      color: white;
+      padding-bottom: 4rem;
+    }
+    header {
+      background-color: #1f1f1f;
+      padding: 1rem;
+      text-align: center;
     }
     h1 {
-      text-align: center;
+      margin: 0;
       color: #00ff88;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1rem;
+      background-color: #1a1a1a;
+    }
+    .controls input, .controls button {
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+    }
+    .track-list {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
     }
     .track {
       background: #2e2e2e;
       padding: 1rem;
-      margin: 1rem auto;
       border-radius: 10px;
       max-width: 600px;
+      width: 100%;
       box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      position: relative;
     }
     .track h3 {
       margin: 0 0 0.5rem;
     }
     audio {
       width: 100%;
-      margin-top: 0.5rem;
+    }
+    .like {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+    .like.liked {
+      color: #ff4081;
+    }
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #1f1f1f;
+      padding: 1rem;
+      text-align: center;
+      color: #888;
     }
   </style>
 </head>
 <body>
 
-  <h1>🎵 Free Music Archive Player</h1>
+  <header>
+    <h1>🎵 Free Music App</h1>
+  </header>
 
-  <div class="track">
-    <h3>Beethoven - Symphony No.5</h3>
-    <audio controls>
-      <source src="https://archive.org/download/BeethovenSymphony5/BeethovenSymphony5.mp3" type="audio/mpeg">
-      Ваш браузер не поддерживает аудио.
-    </audio>
+  <div class="controls">
+    <input id="search" type="text" placeholder="Поиск трека...">
+    <button onclick="filterByGenre('all')">Все</button>
+    <button onclick="filterByGenre('classical')">Классика</button>
+    <button onclick="filterByGenre('lounge')">Лаунж</button>
+    <button onclick="filterByGenre('electronic')">Электроника</button>
+    <button onclick="filterByGenre('vintage')">Винтаж</button>
+    <button onclick="filterByGenre('ethno')">Этно</button>
+    <button onclick="filterByGenre('live')">Лайв</button>
+    <button onclick="showFavorites()">❤️ Избранное</button>
+    <button onclick="toggleTheme()">🌓 Тема</button>
   </div>
 
-  <div class="track">
-    <h3>Chopin - Prelude No.15</h3>
-    <audio controls>
-      <source src="https://archive.org/download/Chopin_Prelude_No_15/Chopin_Prelude_No_15.mp3" type="audio/mpeg">
-      Ваш браузер не поддерживает аудио.
-    </audio>
+  <div class="track-list" id="trackList"></div>
+
+  <div class="footer">
+    Made with ❤️ using archive.org open music
   </div>
 
-  <div class="track">
-    <h3>Anonymous - Medieval Tune</h3>
-    <audio controls>
-      <source src="https://archive.org/download/medieval_music_collection/01-Anonymous-Medieval_Tune.mp3" type="audio/mpeg">
-      Ваш браузер не поддерживает аудио.
-    </audio>
-  </div>
+  <script>
+    const tracks = [
+      { title: "Beethoven - Symphony No.5", src: "https://archive.org/download/BeethovenSymphony5/BeethovenSymphony5.mp3", genre: "classical" },
+      { title: "Chopin - Prelude No.15", src: "https://archive.org/download/Chopin_Prelude_No_15/Chopin_Prelude_No_15.mp3", genre: "classical" },
+      { title: "Electronic Breeze", src: "https://archive.org/download/electronic_beats/electronic_breeze.mp3", genre: "electronic" },
+      { title: "Lounge Cafe", src: "https://archive.org/download/lounge_collection/lounge_cafe.mp3", genre: "lounge" },
+      { title: "Vintage Jazz", src: "https://archive.org/download/vintage_jazz/vintage_jazz_01.mp3", genre: "vintage" },
+      { title: "Ethno Vibes", src: "https://archive.org/download/ethno_collection/ethno_vibes.mp3", genre: "ethno" },
+      { title: "Live Session A", src: "https://archive.org/download/live_music_a/live_session_a.mp3", genre: "live" },
+    ];
 
+    let currentGenre = 'all';
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+
+    function renderTracks(filter = '') {
+      const list = document.getElementById('trackList');
+      list.innerHTML = '';
+      const lowerFilter = filter.toLowerCase();
+
+      let filteredTracks = tracks.filter(t => (currentGenre === 'all' || t.genre === currentGenre));
+      if (filter) {
+        filteredTracks = filteredTracks.filter(t => t.title.toLowerCase().includes(lowerFilter));
+      }
+
+      filteredTracks.forEach(track => {
+        const div = document.createElement('div');
+        div.className = 'track';
+
+        const liked = favorites.includes(track.src);
+
+        div.innerHTML = `
+          <h3>${track.title}</h3>
+          <audio controls src="${track.src}"></audio>
+          <div class="like ${liked ? 'liked' : ''}" onclick="toggleLike('${track.src}', this)">❤️</div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function filterByGenre(genre) {
+      currentGenre = genre;
+      renderTracks(document.getElementById('search').value);
+    }
+
+    function toggleLike(src, el) {
+      if (favorites.includes(src)) {
+        favorites = favorites.filter(f => f !== src);
+      } else {
+        favorites.push(src);
+      }
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      el.classList.toggle('liked');
+    }
+
+    function showFavorites() {
+      const list = document.getElementById('trackList');
+      list.innerHTML = '';
+
+      const favTracks = tracks.filter(t => favorites.includes(t.src));
+      favTracks.forEach(track => {
+        const div = document.createElement('div');
+        div.className = 'track';
+        div.innerHTML = `
+          <h3>${track.title}</h3>
+          <audio controls src="${track.src}"></audio>
+          <div class="like liked" onclick="toggleLike('${track.src}', this)">❤️</div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    document.getElementById('search').addEventListener('input', (e) => {
+      renderTracks(e.target.value);
+    });
+
+    function toggleTheme() {
+      const isDark = document.body.style.backgroundColor === 'white';
+      document.body.style.backgroundColor = isDark ? '#121212' : 'white';
+      document.body.style.color = isDark ? 'white' : '#121212';
+    }
+
+    renderTracks();
+  </script>
 </body>
 </html>
