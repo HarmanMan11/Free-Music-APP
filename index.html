@@ -3,80 +3,162 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Free Music App + Chat</title>
+  <title>Free Music App v1.1.0</title>
   <style>
+    /* Reset и базовые стили */
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
-      font-family: sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #121212;
-      color: white;
+      color: #eee;
+      min-height: 100vh;
       padding-bottom: 4rem;
+      transition: background-color 0.3s, color 0.3s;
+      overflow-y: scroll;
     }
+    body.light-theme {
+      background-color: #fefefe;
+      color: #222;
+    }
+
     header {
       background-color: #1f1f1f;
       padding: 1rem;
       text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    body.light-theme header {
+      background-color: #eaeaea;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     h1 {
       margin: 0;
       color: #00ff88;
+      user-select: none;
     }
+    body.light-theme h1 {
+      color: #008844;
+    }
+
     .controls {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 1rem;
+      gap: 0.75rem;
       padding: 1rem;
       background-color: #1a1a1a;
+      box-shadow: inset 0 -1px 3px rgba(0,0,0,0.7);
+      user-select: none;
     }
-    .controls input, .controls button {
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
+    body.light-theme .controls {
+      background-color: #f5f5f5;
+      box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1);
+    }
+    .controls input[type="text"] {
+      flex-grow: 1;
+      max-width: 300px;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
       border: none;
+      font-size: 1rem;
       outline: none;
-      background: #333;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s;
+      transition: background-color 0.3s, color 0.3s;
+      background-color: #2b2b2b;
+      color: #eee;
     }
-    .controls input:focus, .controls button:hover {
-      background: #00ff88;
+    body.light-theme .controls input[type="text"] {
+      background-color: #fff;
+      color: #222;
+      border: 1px solid #ccc;
+    }
+    .controls button {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      border: none;
+      background-color: #00ff88;
       color: #121212;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,255,136,0.5);
+      transition: background-color 0.3s, color 0.3s;
+      user-select: none;
     }
+    .controls button:hover {
+      background-color: #00cc66;
+      box-shadow: 0 4px 12px rgba(0,204,102,0.8);
+      color: #fff;
+    }
+    body.light-theme .controls button {
+      background-color: #008844;
+      color: #fff;
+      box-shadow: 0 3px 8px rgba(0,136,68,0.5);
+    }
+    body.light-theme .controls button:hover {
+      background-color: #006622;
+      box-shadow: 0 4px 12px rgba(0,102,34,0.8);
+    }
+
     .track-list {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 1rem;
-      padding: 1rem;
+      padding: 1rem 1rem 6rem;
+      max-width: 800px;
+      margin: 0 auto;
     }
     .track {
       background: #2e2e2e;
-      padding: 1rem;
-      border-radius: 10px;
-      max-width: 600px;
+      padding: 1rem 1.2rem;
+      border-radius: 12px;
       width: 100%;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
       position: relative;
+      transition: background-color 0.3s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    body.light-theme .track {
+      background: #fff;
+      color: #222;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     .track h3 {
-      margin: 0 0 0.5rem;
+      margin: 0;
+      font-size: 1.15rem;
+      user-select: text;
     }
     audio {
       width: 100%;
-      border-radius: 5px;
+      outline: none;
+      border-radius: 6px;
+      background-color: #111;
+    }
+    body.light-theme audio {
+      background-color: #ddd;
     }
     .like {
       position: absolute;
-      top: 1rem;
-      right: 1rem;
+      top: 12px;
+      right: 12px;
+      font-size: 1.7rem;
       cursor: pointer;
-      font-size: 1.5rem;
       user-select: none;
+      transition: color 0.3s;
+      color: #bbb;
     }
     .like.liked {
       color: #ff4081;
+      text-shadow: 0 0 5px #ff4081aa;
     }
+    .like:hover {
+      color: #ff4081;
+    }
+
     .footer {
       position: fixed;
       bottom: 0;
@@ -86,360 +168,513 @@
       padding: 1rem;
       text-align: center;
       color: #888;
+      font-size: 0.9rem;
+      user-select: none;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.7);
+      transition: background-color 0.3s, color 0.3s;
     }
-    /* --- Chat styles --- */
-    #chatButton {
+    body.light-theme .footer {
+      background: #eaeaea;
+      color: #555;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Чат: кнопка открытия */
+    #chatToggleBtn {
       position: fixed;
-      bottom: 5rem;
-      right: 1rem;
-      background: #00ff88;
+      bottom: 80px;
+      right: 24px;
+      background-color: #00ff88;
+      color: #121212;
       border: none;
       border-radius: 50%;
-      width: 3.5rem;
-      height: 3.5rem;
-      font-size: 1.8rem;
+      width: 56px;
+      height: 56px;
+      font-size: 28px;
       cursor: pointer;
-      box-shadow: 0 0 10px #00ff88;
-      transition: background 0.3s;
-      color: #121212;
+      box-shadow: 0 4px 14px rgba(0,255,136,0.7);
+      user-select: none;
+      z-index: 9999;
+      transition: background-color 0.3s, color 0.3s;
     }
-    #chatButton:hover {
-      background: #00cc66;
+    #chatToggleBtn:hover {
+      background-color: #00cc66;
+      color: #fff;
     }
+    body.light-theme #chatToggleBtn {
+      background-color: #008844;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(0,136,68,0.7);
+    }
+    body.light-theme #chatToggleBtn:hover {
+      background-color: #006622;
+    }
+
+    /* Модальное окно чата */
     #chatModal {
-      display: none;
       position: fixed;
-      bottom: 5.5rem;
-      right: 1rem;
+      bottom: 140px;
+      right: 24px;
       width: 320px;
-      max-height: 400px;
-      background: #222;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,255,136,0.6);
+      max-height: 420px;
+      background-color: #222;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.8);
+      display: none;
       flex-direction: column;
       overflow: hidden;
-      z-index: 1000;
+      z-index: 10000;
+      user-select: none;
+      color: #eee;
+      transition: background-color 0.3s, color 0.3s;
     }
-    #chatModal.active {
-      display: flex;
+    body.light-theme #chatModal {
+      background-color: #f0f0f0;
+      color: #222;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
     }
-    #chatHeader {
-      background: #00ff88;
+    #chatModal header {
+      background-color: #00ff88;
       color: #121212;
       padding: 0.5rem 1rem;
-      font-weight: bold;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+    body.light-theme #chatModal header {
+      background-color: #008844;
+      color: #fff;
     }
     #chatMessages {
       flex-grow: 1;
-      padding: 0.5rem;
+      padding: 0.75rem 1rem;
       overflow-y: auto;
-      color: white;
       font-size: 0.9rem;
-      background: #121212;
+      line-height: 1.3;
+      background-color: #1a1a1a;
+      user-select: text;
     }
-    #chatInputForm {
+    body.light-theme #chatMessages {
+      background-color: #fff;
+    }
+    .chat-message {
+      margin-bottom: 0.4rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      word-wrap: break-word;
+      max-width: 80%;
+    }
+    .chat-message.me {
+      background-color: #00ff88aa;
+      color: #121212;
+      margin-left: auto;
+      text-align: right;
+    }
+    .chat-message.other {
+      background-color: #333;
+      color: #eee;
+    }
+    body.light-theme .chat-message.other {
+      background-color: #ddd;
+      color: #222;
+    }
+    #chatInputWrapper {
+      padding: 0.5rem;
+      background-color: #111;
       display: flex;
-      border-top: 1px solid #00ff88;
-      background: #1f1f1f;
+      gap: 0.5rem;
+    }
+    body.light-theme #chatInputWrapper {
+      background-color: #ddd;
     }
     #chatInput {
       flex-grow: 1;
-      padding: 0.5rem;
+      border-radius: 6px;
       border: none;
-      background: #121212;
-      color: white;
+      padding: 0.4rem 0.75rem;
       font-size: 1rem;
-    }
-    #chatInput:focus {
       outline: none;
+      color: #eee;
+      background-color: #333;
+      transition: background-color 0.3s, color 0.3s;
     }
-    #chatSendButton {
-      background: #00ff88;
+    body.light-theme #chatInput {
+      color: #222;
+      background-color: #fff;
+      border: 1px solid #bbb;
+    }
+    #chatSendBtn {
+      background-color: #00ff88;
       border: none;
+      border-radius: 6px;
       color: #121212;
-      padding: 0 1rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 0 0.8rem;
       cursor: pointer;
-      font-weight: bold;
-      transition: background 0.3s;
+      user-select: none;
+      transition: background-color 0.3s;
     }
-    #chatSendButton:hover {
-      background: #00cc66;
+    #chatSendBtn:hover {
+      background-color: #00cc66;
+      color: #fff;
     }
-    /* Login modal */
-    #loginModal {
-      display: none;
+    body.light-theme #chatSendBtn {
+      background-color: #008844;
+      color: #fff;
+    }
+    body.light-theme #chatSendBtn:hover {
+      background-color: #006622;
+    }
+
+    /* Модалка для ввода ника */
+    #nicknameModal {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8);
+      inset: 0;
+      background-color: rgba(0,0,0,0.7);
+      display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 2000;
+      z-index: 11000;
+      user-select: none;
     }
-    #loginModal.active {
-      display: flex;
-    }
-    #loginBox {
-      background: #222;
-      padding: 2rem;
-      border-radius: 10px;
+    #nicknameModalContent {
+      background-color: #222;
+      padding: 1.5rem 2rem;
+      border-radius: 12px;
       width: 280px;
+      color: #eee;
       text-align: center;
-      box-shadow: 0 0 15px #00ff88;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.9);
     }
-    #loginBox input {
+    body.light-theme #nicknameModalContent {
+      background-color: #fff;
+      color: #222;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    #nicknameInput {
       width: 100%;
-      padding: 0.5rem;
-      margin: 1rem 0;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      border: none;
       font-size: 1rem;
-      border: none;
-      border-radius: 5px;
+      margin: 1rem 0;
+      outline: none;
     }
-    #loginBox button {
-      background: #00ff88;
+    body.light-theme #nicknameInput {
+      border: 1px solid #bbb;
+    }
+    #nicknameSubmitBtn {
+      background-color: #00ff88;
       border: none;
-      padding: 0.7rem 1.5rem;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 5px;
+      border-radius: 6px;
       color: #121212;
-      transition: background 0.3s;
+      font-weight: 700;
+      padding: 0.5rem 1.2rem;
+      cursor: pointer;
+      user-select: none;
+      font-size: 1rem;
+      transition: background-color 0.3s;
     }
-    #loginBox button:hover {
-      background: #00cc66;
+    #nicknameSubmitBtn:hover {
+      background-color: #00cc66;
+      color: #fff;
+    }
+    body.light-theme #nicknameSubmitBtn {
+      background-color: #008844;
+      color: #fff;
+    }
+    body.light-theme #nicknameSubmitBtn:hover {
+      background-color: #006622;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>🎵 Free Music App</h1>
-  </header>
+<header>
+  <h1>🎵 Free Music App v1.1.0</h1>
+</header>
 
-  <div class="controls">
-    <input id="search" type="text" placeholder="Поиск трека...">
-    <button onclick="filterByGenre('all')">Все</button>
-    <button onclick="filterByGenre('classical')">Классика</button>
-    <button onclick="filterByGenre('lounge')">Лаунж</button>
-    <button onclick="filterByGenre('electronic')">Электроника</button>
-    <button onclick="filterByGenre('vintage')">Винтаж</button>
-    <button onclick="filterByGenre('ethno')">Этно</button>
-    <button onclick="filterByGenre('live')">Лайв</button>
-    <button onclick="showFavorites()">❤️ Избранное</button>
-    <button onclick="toggleTheme()">🌓 Тема</button>
+<div class="controls">
+  <input id="search" type="text" placeholder="Поиск трека..." autocomplete="off" />
+  <button onclick="filterByGenre('all')">Все</button>
+  <button onclick="filterByGenre('classical')">Классика</button>
+  <button onclick="filterByGenre('lounge')">Лаунж</button>
+  <button onclick="filterByGenre('electronic')">Электроника</button>
+  <button onclick="filterByGenre('vintage')">Винтаж</button>
+  <button onclick="filterByGenre('ethno')">Этно</button>
+  <button onclick="filterByGenre('live')">Лайв</button>
+  <button onclick="showFavorites()">❤️ Избранное</button>
+  <button onclick="toggleTheme()">🌓 Тема</button>
+</div>
+
+<div class="track-list" id="trackList"></div>
+
+<div class="footer">© 2025 Free Music App — Музыка и чат в одном месте</div>
+
+<!-- Кнопка открытия чата -->
+<button id="chatToggleBtn" title="Открыть чат">💬</button>
+
+<!-- Модалка чата -->
+<div id="chatModal">
+  <header>Чат</header>
+  <div id="chatMessages"></div>
+  <div id="chatInputWrapper">
+    <input id="chatInput" type="text" placeholder="Введите сообщение..." autocomplete="off" />
+    <button id="chatSendBtn">Отправить</button>
   </div>
+</div>
 
-  <div class="track-list" id="trackList"></div>
-
-  <div class="footer">
-    Made with ❤️ using archive.org open music
+<!-- Модалка ввода ника -->
+<div id="nicknameModal" style="display:none;">
+  <div id="nicknameModalContent">
+    <h2>Введите ваш ник для чата</h2>
+    <input id="nicknameInput" type="text" placeholder="Ваш ник" maxlength="20" />
+    <button id="nicknameSubmitBtn">Войти</button>
   </div>
-
-  <!-- Кнопка открытия чата -->
-  <button id="chatButton" title="Открыть чат">💬</button>
-
-  <!-- Окно чата -->
-  <div id="chatModal">
-    <div id="chatHeader">
-      Чат
-      <button id="chatCloseBtn" title="Закрыть чат" style="background:none;border:none;cursor:pointer;font-weight:bold;font-size:1.2rem;color:#121212;">×</button>
-    </div>
-    <div id="chatMessages"></div>
-    <form id="chatInputForm">
-      <input id="chatInput" autocomplete="off" placeholder="Введите сообщение..." />
-      <button type="submit" id="chatSendButton">Отправить</button>
-    </form>
-  </div>
-
-  <!-- Модальное окно логина -->
-  <div id="loginModal">
-    <div id="loginBox">
-      <h2>Введите ник</h2>
-      <input id="loginInput" placeholder="Ваш ник" autocomplete="off" />
-      <button id="loginBtn">Войти</button>
-    </div>
-  </div>
+</div>
 
 <script>
-  // Музыкальные треки
+  // Данные треков — можно заменить своими mp3 и метаданными
   const tracks = [
-    { title: "Beethoven - Symphony No.5", src: "https://archive.org/download/BeethovenSymphony5/BeethovenSymphony5.mp3", genre: "classical" },
-    { title: "Chopin - Prelude No.15", src: "https://archive.org/download/Chopin_Prelude_No_15/Chopin_Prelude_No_15.mp3", genre: "classical" },
-    { title: "Electronic Breeze", src: "https://archive.org/download/electronic_beats/electronic_breeze.mp3", genre: "electronic" },
-    { title: "Lounge Cafe", src: "https://archive.org/download/lounge_collection/lounge_cafe.mp3", genre: "lounge" },
-    { title: "Vintage Jazz", src: "https://archive.org/download/vintage_jazz/vintage_jazz_01.mp3", genre: "vintage" },
-    { title: "Ethno Vibes", src: "https://archive.org/download/ethno_collection/ethno_vibes.mp3", genre: "ethno" },
-    { title: "Live Session A", src: "https://archive.org/download/live_music_a/live_session_a.mp3", genre: "live" },
+    {
+      id: 1,
+      title: "Classical Morning",
+      src: "https://cdn.pixabay.com/download/audio/2021/12/26/audio_7e99b3be3f.mp3?filename=classical-morning-6969.mp3",
+      genre: "classical",
+    },
+    {
+      id: 2,
+      title: "Lounge Vibes",
+      src: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_7a59db79a3.mp3?filename=lounge-vibes-1234.mp3",
+      genre: "lounge",
+    },
+    {
+      id: 3,
+      title: "Electronic Beat",
+      src: "https://cdn.pixabay.com/download/audio/2021/10/04/audio_63e3d4561c.mp3?filename=electronic-beat-5678.mp3",
+      genre: "electronic",
+    },
+    {
+      id: 4,
+      title: "Vintage Jazz",
+      src: "https://cdn.pixabay.com/download/audio/2021/09/25/audio_8f6b4b5767.mp3?filename=vintage-jazz-4321.mp3",
+      genre: "vintage",
+    },
+    {
+      id: 5,
+      title: "Ethno Fusion",
+      src: "https://cdn.pixabay.com/download/audio/2021/12/15/audio_7d6b3e0c1a.mp3?filename=ethno-fusion-7890.mp3",
+      genre: "ethno",
+    },
+    {
+      id: 6,
+      title: "Live Concert",
+      src: "https://cdn.pixabay.com/download/audio/2022/02/10/audio_4a1fbc6e2a.mp3?filename=live-concert-3456.mp3",
+      genre: "live",
+    },
   ];
 
-  window.appState = window.appState || {
-    currentGenre: 'all',
-    favorites: JSON.parse(localStorage.getItem('favorites') || '[]')
-  };
+  // Локальное хранилище избранного
+  const favoritesKey = "fmapp_favorites";
+  const chatHistoryKey = "fmapp_chat_history";
+  const nicknameKey = "fmapp_nickname";
+  const themeKey = "fmapp_theme";
+
+  let favorites = JSON.parse(localStorage.getItem(favoritesKey)) || [];
+  let currentGenre = "all";
+  let currentSearch = "";
+  let showingFavorites = false;
+
+  const trackListEl = document.getElementById("trackList");
+  const searchInput = document.getElementById("search");
 
   // Отрисовка треков
-  function renderTracks(filter = '') {
-    const list = document.getElementById('trackList');
-    list.innerHTML = '';
-    const lowerFilter = filter.toLowerCase();
+  function renderTracks() {
+    trackListEl.innerHTML = "";
 
-    let filteredTracks = tracks.filter(t => (appState.currentGenre === 'all' || t.genre === appState.currentGenre));
-    if (filter) {
-      filteredTracks = filteredTracks.filter(t => t.title.toLowerCase().includes(lowerFilter));
+    let filteredTracks = tracks.filter(track => {
+      if (showingFavorites && !favorites.includes(track.id)) return false;
+      if (currentGenre !== "all" && track.genre !== currentGenre) return false;
+      if (currentSearch.trim() !== "" && !track.title.toLowerCase().includes(currentSearch.toLowerCase())) return false;
+      return true;
+    });
+
+    if (filteredTracks.length === 0) {
+      trackListEl.innerHTML = `<p style="text-align:center; opacity:0.6; user-select:none;">Треки не найдены</p>`;
+      return;
     }
 
     filteredTracks.forEach(track => {
-      const div = document.createElement('div');
-      div.className = 'track';
+      const isLiked = favorites.includes(track.id);
+      const trackEl = document.createElement("div");
+      trackEl.className = "track";
 
-      const liked = appState.favorites.includes(track.src);
-
-      div.innerHTML = `
+      trackEl.innerHTML = `
         <h3>${track.title}</h3>
-        <audio controls src="${track.src}"></audio>
-        <div class="like ${liked ? 'liked' : ''}" onclick="toggleLike('${track.src}', this)">❤️</div>
+        <audio controls preload="none" src="${track.src}"></audio>
+        <span class="like${isLiked ? " liked" : ""}" title="Добавить в избранное" data-id="${track.id}">&#10084;</span>
       `;
-      list.appendChild(div);
+
+      // Обработка лайка
+      trackEl.querySelector(".like").onclick = (e) => {
+        const id = parseInt(e.target.dataset.id);
+        toggleFavorite(id);
+      };
+
+      // Сделать, чтобы запуск одного аудио останавливал другое
+      const audio = trackEl.querySelector("audio");
+      audio.onplay = () => {
+        document.querySelectorAll("audio").forEach(a => {
+          if (a !== audio) a.pause();
+        });
+      };
+
+      trackListEl.appendChild(trackEl);
     });
   }
 
-  function filterByGenre(genre) {
-    appState.currentGenre = genre;
-    renderTracks(document.getElementById('search').value);
-  }
-
-  function toggleLike(src, el) {
-    if (appState.favorites.includes(src)) {
-      appState.favorites = appState.favorites.filter(f => f !== src);
+  // Управление избранным
+  function toggleFavorite(id) {
+    if (favorites.includes(id)) {
+      favorites = favorites.filter(fav => fav !== id);
     } else {
-      appState.favorites.push(src);
+      favorites.push(id);
     }
-    localStorage.setItem('favorites', JSON.stringify(appState.favorites));
-    el.classList.toggle('liked');
+    localStorage.setItem(favoritesKey, JSON.stringify(favorites));
+    renderTracks();
   }
 
+  // Фильтрация по жанру
+  function filterByGenre(genre) {
+    currentGenre = genre;
+    showingFavorites = false;
+    renderTracks();
+  }
+
+  // Показать избранное
   function showFavorites() {
-    const list = document.getElementById('trackList');
-    list.innerHTML = '';
-
-    const favTracks = tracks.filter(t => appState.favorites.includes(t.src));
-    favTracks.forEach(track => {
-      const div = document.createElement('div');
-      div.className = 'track';
-      div.innerHTML = `
-        <h3>${track.title}</h3>
-        <audio controls src="${track.src}"></audio>
-        <div class="like liked" onclick="toggleLike('${track.src}', this)">❤️</div>
-      `;
-      list.appendChild(div);
-    });
+    showingFavorites = true;
+    renderTracks();
   }
 
-  document.getElementById('search').addEventListener('input', (e) => {
-    renderTracks(e.target.value);
+  // Поиск по названию
+  searchInput.addEventListener("input", e => {
+    currentSearch = e.target.value;
+    showingFavorites = false;
+    renderTracks();
   });
 
+  // Тема
   function toggleTheme() {
-    const isDark = document.body.style.backgroundColor === 'white';
-    document.body.style.backgroundColor = isDark ? '#121212' : 'white';
-    document.body.style.color = isDark ? 'white' : '#121212';
-  }
-
-  // --- Чат ---
-
-  const chatButton = document.getElementById('chatButton');
-  const chatModal = document.getElementById('chatModal');
-  const chatCloseBtn = document.getElementById('chatCloseBtn');
-  const chatMessages = document.getElementById('chatMessages');
-  const chatInputForm = document.getElementById('chatInputForm');
-  const chatInput = document.getElementById('chatInput');
-
-  const loginModal = document.getElementById('loginModal');
-  const loginInput = document.getElementById('loginInput');
-  const loginBtn = document.getElementById('loginBtn');
-
-  // Хранение текущего пользователя
-  let currentUser = localStorage.getItem('chatUser') || null;
-
-  // Хранение сообщений
-  function getMessages() {
-    return JSON.parse(localStorage.getItem('chatMessages') || '[]');
-  }
-  function saveMessages(msgs) {
-    localStorage.setItem('chatMessages', JSON.stringify(msgs));
-  }
-
-  // Показать чат
-  function openChat() {
-    if (!currentUser) {
-      loginModal.classList.add('active');
+    const body = document.body;
+    if(body.classList.contains("light-theme")) {
+      body.classList.remove("light-theme");
+      localStorage.setItem(themeKey, "dark");
     } else {
-      chatModal.classList.add('active');
-      renderMessages();
+      body.classList.add("light-theme");
+      localStorage.setItem(themeKey, "light");
+    }
+  }
+  // Применение темы из локального хранилища
+  function applyStoredTheme() {
+    const theme = localStorage.getItem(themeKey);
+    if(theme === "light") {
+      document.body.classList.add("light-theme");
+    } else {
+      document.body.classList.remove("light-theme");
     }
   }
 
-  // Скрыть чат
-  function closeChat() {
-    chatModal.classList.remove('active');
+  // ==== Чат и авторизация ====
+
+  const chatToggleBtn = document.getElementById("chatToggleBtn");
+  const chatModal = document.getElementById("chatModal");
+  const chatMessages = document.getElementById("chatMessages");
+  const chatInput = document.getElementById("chatInput");
+  const chatSendBtn = document.getElementById("chatSendBtn");
+
+  const nicknameModal = document.getElementById("nicknameModal");
+  const nicknameInput = document.getElementById("nicknameInput");
+  const nicknameSubmitBtn = document.getElementById("nicknameSubmitBtn");
+
+  let nickname = localStorage.getItem(nicknameKey) || null;
+  let chatHistory = JSON.parse(localStorage.getItem(chatHistoryKey)) || [];
+
+  function openChat() {
+    if (!nickname) {
+      nicknameModal.style.display = "flex";
+    } else {
+      chatModal.style.display = "flex";
+      renderChatMessages();
+      chatInput.focus();
+    }
   }
 
-  // Показать логин
-  function closeLogin() {
-    loginModal.classList.remove('active');
-  }
+  chatToggleBtn.addEventListener("click", () => {
+    if (chatModal.style.display === "flex") {
+      chatModal.style.display = "none";
+    } else {
+      openChat();
+    }
+  });
 
-  chatButton.addEventListener('click', openChat);
-  chatCloseBtn.addEventListener('click', closeChat);
-
-  loginBtn.addEventListener('click', () => {
-    const username = loginInput.value.trim();
-    if (username.length < 2) {
-      alert('Ник должен быть минимум 2 символа');
+  nicknameSubmitBtn.addEventListener("click", () => {
+    const name = nicknameInput.value.trim();
+    if(name.length < 2) {
+      alert("Введите ник длиной минимум 2 символа");
       return;
     }
-    currentUser = username;
-    localStorage.setItem('chatUser', currentUser);
-    closeLogin();
+    nickname = name;
+    localStorage.setItem(nicknameKey, nickname);
+    nicknameModal.style.display = "none";
     openChat();
   });
 
-  // Отрисовка сообщений
-  function renderMessages() {
-    const msgs = getMessages();
-    chatMessages.innerHTML = '';
-    msgs.forEach(msg => {
-      const div = document.createElement('div');
-      div.style.padding = '4px 6px';
-      div.style.borderBottom = '1px solid #00ff88';
-      div.innerHTML = `<b>${escapeHtml(msg.username)}</b>: ${escapeHtml(msg.text)}`;
-      chatMessages.appendChild(div);
+  nicknameInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") {
+      nicknameSubmitBtn.click();
+    }
+  });
+
+  function renderChatMessages() {
+    chatMessages.innerHTML = "";
+    chatHistory.forEach(msg => {
+      const msgEl = document.createElement("div");
+      msgEl.className = "chat-message " + (msg.nickname === nickname ? "me" : "other");
+      msgEl.textContent = `${msg.nickname}: ${msg.text}`;
+      chatMessages.appendChild(msgEl);
     });
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
-  // Безопасное экранирование текста
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+  function sendMessage() {
+    const text = chatInput.value.trim();
+    if(text === "") return;
+    const msg = {nickname, text, time: Date.now()};
+    chatHistory.push(msg);
+    if(chatHistory.length > 100) chatHistory.shift(); // Ограничим до 100 сообщений
+    localStorage.setItem(chatHistoryKey, JSON.stringify(chatHistory));
+    chatInput.value = "";
+    renderChatMessages();
   }
 
-  // Отправка сообщения
-  chatInputForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const text = chatInput.value.trim();
-    if (!text) return;
-    const msgs = getMessages();
-    msgs.push({ id: Date.now(), username: currentUser, text, timestamp: new Date().toISOString() });
-    saveMessages(msgs);
-    chatInput.value = '';
-    renderMessages();
+  chatSendBtn.addEventListener("click", sendMessage);
+  chatInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") {
+      sendMessage();
+    }
   });
 
-  // При загрузке страницы
+  // При клике вне модалки ника - не закрывать (можно доработать)
+  nicknameModal.addEventListener("click", (e) => {
+    if(e.target === nicknameModal) {
+      // Можно не закрывать, чтобы ник всегда был введен
+    }
+  });
+
+  // --- Инициализация ---
+  applyStoredTheme();
   renderTracks();
 </script>
 
