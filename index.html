@@ -95,7 +95,7 @@
     <button onclick="filterByGenre('ethno')">Этно</button>
     <button onclick="filterByGenre('live')">Лайв</button>
     <button onclick="showFavorites()">❤️ Избранное</button>
-    <button onclick="toggleTheme()">🌓 Тема</button>
+    <button onclick="toggleTheme()">🌃 Тема</button>
   </div>
 
   <div class="track-list" id="trackList"></div>
@@ -105,7 +105,12 @@
   </div>
 
   <script>
-    const tracks = [
+    window.appState = window.appState || {
+      currentGenre: 'all',
+      favorites: JSON.parse(localStorage.getItem('favorites') || '[]')
+    };
+
+    const musicTracks = [
       { title: "Beethoven - Symphony No.5", src: "https://archive.org/download/BeethovenSymphony5/BeethovenSymphony5.mp3", genre: "classical" },
       { title: "Chopin - Prelude No.15", src: "https://archive.org/download/Chopin_Prelude_No_15/Chopin_Prelude_No_15.mp3", genre: "classical" },
       { title: "Electronic Breeze", src: "https://archive.org/download/electronic_beats/electronic_breeze.mp3", genre: "electronic" },
@@ -115,15 +120,12 @@
       { title: "Live Session A", src: "https://archive.org/download/live_music_a/live_session_a.mp3", genre: "live" },
     ];
 
-    let currentGenre = 'all';
-    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-
     function renderTracks(filter = '') {
       const list = document.getElementById('trackList');
       list.innerHTML = '';
       const lowerFilter = filter.toLowerCase();
 
-      let filteredTracks = tracks.filter(t => (currentGenre === 'all' || t.genre === currentGenre));
+      let filteredTracks = musicTracks.filter(t => (appState.currentGenre === 'all' || t.genre === appState.currentGenre));
       if (filter) {
         filteredTracks = filteredTracks.filter(t => t.title.toLowerCase().includes(lowerFilter));
       }
@@ -132,29 +134,29 @@
         const div = document.createElement('div');
         div.className = 'track';
 
-        const liked = favorites.includes(track.src);
+        const liked = appState.favorites.includes(track.src);
 
         div.innerHTML = `
           <h3>${track.title}</h3>
           <audio controls src="${track.src}"></audio>
-          <div class="like ${liked ? 'liked' : ''}" onclick="toggleLike('${track.src}', this)">❤️</div>
+          <div class="like ${liked ? 'liked' : ''}" onclick="toggleLike('${track.src}', this')">❤️</div>
         `;
         list.appendChild(div);
       });
     }
 
     function filterByGenre(genre) {
-      currentGenre = genre;
+      appState.currentGenre = genre;
       renderTracks(document.getElementById('search').value);
     }
 
     function toggleLike(src, el) {
-      if (favorites.includes(src)) {
-        favorites = favorites.filter(f => f !== src);
+      if (appState.favorites.includes(src)) {
+        appState.favorites = appState.favorites.filter(f => f !== src);
       } else {
-        favorites.push(src);
+        appState.favorites.push(src);
       }
-      localStorage.setItem('favorites', JSON.stringify(favorites));
+      localStorage.setItem('favorites', JSON.stringify(appState.favorites));
       el.classList.toggle('liked');
     }
 
@@ -162,14 +164,14 @@
       const list = document.getElementById('trackList');
       list.innerHTML = '';
 
-      const favTracks = tracks.filter(t => favorites.includes(t.src));
+      const favTracks = musicTracks.filter(t => appState.favorites.includes(t.src));
       favTracks.forEach(track => {
         const div = document.createElement('div');
         div.className = 'track';
         div.innerHTML = `
           <h3>${track.title}</h3>
           <audio controls src="${track.src}"></audio>
-          <div class="like liked" onclick="toggleLike('${track.src}', this)">❤️</div>
+          <div class="like liked" onclick="toggleLike('${track.src}', this')">❤️</div>
         `;
         list.appendChild(div);
       });
