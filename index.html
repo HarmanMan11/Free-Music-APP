@@ -516,5 +516,18 @@
       }
     });
   </script>
+  <!-- ЧАТ -->
+<div id="chatContainer" style="position: fixed; bottom: 5rem; right: 1rem; width: 300px; background: #1f1f1f; color: white; padding: 1rem; border-radius: 10px; box-shadow: 0 0 10px #000;">
+  <h3 style="margin-top: 0;">💬 Чат</h3>
+  <div id="chatMessages" style="height: 200px; overflow-y: auto; background: #2c2c2c; padding: 0.5rem; border-radius: 5px; margin-bottom: 0.5rem;"></div>
+  <form id="chatForm" style="display: flex; gap: 0.5rem;">
+    <input id="chatInput" type="text" placeholder="Сообщение..." style="flex: 1; padding: 0.5rem; border-radius: 5px; border: none;">
+    <button type="submit" style="padding: 0.5rem 1rem; border: none; background: #00ff88; color: black; border-radius: 5px;">OK</button>
+  </form>
+</div>
+
+<!-- Подключение Socket.IO -->
+<script src="/socket.io/socket.io.js"></script>
+<script src="client.js"></script>
 </body>
 </html>
