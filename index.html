@@ -5,33 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Free Music App + Chat</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-
     body {
       margin: 0;
-      font-family: 'Montserrat', sans-serif;
+      font-family: sans-serif;
       background-color: #121212;
-      color: #eee;
+      color: white;
       padding-bottom: 4rem;
-      transition: background-color 0.3s, color 0.3s;
-      overflow-x: hidden;
     }
-
     header {
       background-color: #1f1f1f;
-      padding: 1.5rem 1rem;
+      padding: 1rem;
       text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.7);
     }
-
-    header h1 {
+    h1 {
       margin: 0;
-      font-weight: 700;
       color: #00ff88;
-      font-size: 2rem;
-      user-select: none;
     }
-
     .controls {
       display: flex;
       flex-wrap: wrap;
@@ -39,102 +28,55 @@
       gap: 1rem;
       padding: 1rem;
       background-color: #1a1a1a;
-      box-shadow: inset 0 -1px 3px rgba(0,0,0,0.5);
-      user-select: none;
     }
-
-    .controls input[type="text"] {
+    .controls input, .controls button {
       padding: 0.5rem 1rem;
-      border-radius: 25px;
+      border-radius: 5px;
       border: none;
       outline: none;
-      font-size: 1rem;
-      width: 220px;
-      background-color: #2a2a2a;
-      color: #ddd;
-      transition: background-color 0.3s;
-    }
-    .controls input[type="text"]:focus {
-      background-color: #3a3a3a;
-      box-shadow: 0 0 8px #00ff88;
+      background: #333;
       color: white;
-    }
-
-    .controls button {
-      background: linear-gradient(45deg, #00ff88, #00cc66);
-      border: none;
-      padding: 0.6rem 1.3rem;
-      border-radius: 25px;
-      font-weight: 600;
-      color: #121212;
       cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0,255,136,0.4);
-      transition: transform 0.2s, box-shadow 0.2s;
-      user-select: none;
+      transition: background 0.3s;
     }
-    .controls button:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 10px rgba(0,255,136,0.7);
+    .controls input:focus, .controls button:hover {
+      background: #00ff88;
+      color: #121212;
     }
-
     .track-list {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 1rem;
       padding: 1rem;
-      max-width: 700px;
-      margin: 0 auto 4rem;
     }
-
     .track {
-      background: #222;
-      padding: 1.25rem 1.5rem;
-      border-radius: 15px;
+      background: #2e2e2e;
+      padding: 1rem;
+      border-radius: 10px;
+      max-width: 600px;
       width: 100%;
-      box-shadow: 0 3px 10px rgba(0,255,136,0.3);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
       position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      transition: background-color 0.3s;
     }
-
-    .track:hover {
-      background-color: #2f4f3f;
-    }
-
     .track h3 {
-      margin: 0;
-      font-weight: 700;
-      color: #00ff88;
-      font-size: 1.2rem;
-      user-select: none;
+      margin: 0 0 0.5rem;
     }
-
     audio {
       width: 100%;
-      outline: none;
-      border-radius: 8px;
-      background-color: #1f1f1f;
+      border-radius: 5px;
     }
-
     .like {
       position: absolute;
-      top: 15px;
-      right: 20px;
-      font-size: 1.8rem;
+      top: 1rem;
+      right: 1rem;
       cursor: pointer;
+      font-size: 1.5rem;
       user-select: none;
-      color: #888;
-      transition: color 0.3s;
-      filter: drop-shadow(0 0 1px #000);
     }
     .like.liked {
       color: #ff4081;
-      filter: drop-shadow(0 0 4px #ff4081);
     }
-
     .footer {
       position: fixed;
       bottom: 0;
@@ -143,305 +85,130 @@
       background: #1f1f1f;
       padding: 1rem;
       text-align: center;
-      color: #666;
-      font-size: 0.9rem;
-      user-select: none;
-      box-shadow: inset 0 1px 3px rgba(255,255,255,0.1);
-      z-index: 10;
+      color: #888;
     }
-
-    /* Dark/Light toggle */
-    body.light {
-      background-color: #f4f4f4;
-      color: #222;
+    /* --- Chat styles --- */
+    #chatButton {
+      position: fixed;
+      bottom: 5rem;
+      right: 1rem;
+      background: #00ff88;
+      border: none;
+      border-radius: 50%;
+      width: 3.5rem;
+      height: 3.5rem;
+      font-size: 1.8rem;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ff88;
+      transition: background 0.3s;
+      color: #121212;
     }
-    body.light header {
-      background-color: #e0e0e0;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    #chatButton:hover {
+      background: #00cc66;
     }
-    body.light .controls {
-      background-color: #d7d7d7;
-      box-shadow: inset 0 -1px 3px rgba(255,255,255,0.7);
-    }
-    body.light .controls input[type="text"] {
-      background-color: #fff;
-      color: #222;
-    }
-    body.light .controls input[type="text"]:focus {
-      background-color: #eee;
-      box-shadow: 0 0 8px #00aa55;
-      color: #111;
-    }
-    body.light .controls button {
-      background: linear-gradient(45deg, #00cc66, #009944);
-      color: #f4f4f4;
-      box-shadow: 0 4px 6px rgba(0,204,102,0.6);
-    }
-    body.light .controls button:hover {
-      box-shadow: 0 6px 10px rgba(0,204,102,0.9);
-    }
-    body.light .track {
-      background-color: #fff;
-      color: #222;
-      box-shadow: 0 3px 10px rgba(0,170,85,0.2);
-    }
-    body.light .track:hover {
-      background-color: #d6f5d6;
-    }
-    body.light .track h3 {
-      color: #008833;
-    }
-    body.light audio {
-      background-color: #eee;
-    }
-    body.light .like {
-      color: #aaa;
-      filter: none;
-    }
-    body.light .like.liked {
-      color: #d81b60;
-      filter: drop-shadow(0 0 4px #d81b60);
-    }
-    body.light .footer {
-      background: #e0e0e0;
-      color: #444;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    /* Chat styles */
-    #chatToggleBtn {
+    #chatModal {
+      display: none;
       position: fixed;
       bottom: 5.5rem;
       right: 1rem;
-      z-index: 100;
-      background: linear-gradient(45deg, #00ff88, #00cc66);
-      border: none;
-      border-radius: 50%;
-      width: 56px;
-      height: 56px;
-      font-size: 28px;
-      color: #121212;
-      cursor: pointer;
-      box-shadow: 0 6px 10px rgba(0,255,136,0.7);
-      user-select: none;
-      transition: transform 0.3s ease;
-    }
-    #chatToggleBtn:hover {
-      transform: scale(1.1);
-    }
-
-    #chatModal {
-      position: fixed;
-      bottom: 70px;
-      right: 1rem;
       width: 320px;
-      max-height: 480px;
+      max-height: 400px;
       background: #222;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,255,136,0.5);
-      display: none;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,255,136,0.6);
       flex-direction: column;
       overflow: hidden;
-      z-index: 101;
-      user-select: none;
-      color: #eee;
-      font-size: 14px;
+      z-index: 1000;
     }
-
-    #chatModal.light {
-      background: #fff;
-      color: #222;
-      box-shadow: 0 8px 20px rgba(0,170,85,0.5);
+    #chatModal.active {
+      display: flex;
     }
-
     #chatHeader {
       background: #00ff88;
       color: #121212;
-      font-weight: 700;
-      padding: 0.75rem 1rem;
-      user-select: none;
+      padding: 0.5rem 1rem;
+      font-weight: bold;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    #chatModal.light #chatHeader {
-      background: #00cc66;
-      color: #fff;
-    }
-    #chatCloseBtn {
-      background: transparent;
-      border: none;
-      font-size: 1.4rem;
-      cursor: pointer;
-      user-select: none;
-      color: inherit;
-    }
-    #chatCloseBtn:hover {
-      color: #222;
-    }
-
     #chatMessages {
-      flex: 1;
+      flex-grow: 1;
+      padding: 0.5rem;
       overflow-y: auto;
-      padding: 0.75rem 1rem;
+      color: white;
+      font-size: 0.9rem;
       background: #121212;
-      font-size: 13px;
     }
-    #chatModal.light #chatMessages {
-      background: #f4f4f4;
-    }
-
-    .chat-message {
-      margin-bottom: 0.7rem;
-      line-height: 1.3;
-      word-wrap: break-word;
-    }
-    .chat-message .username {
-      font-weight: 700;
-      margin-right: 0.4rem;
-      color: #00ff88;
-    }
-    #chatModal.light .chat-message .username {
-      color: #008833;
-    }
-    .chat-message.self .username {
-      color: #ff4081;
-    }
-    #chatModal.light .chat-message.self .username {
-      color: #d81b60;
-    }
-
-    #chatInputContainer {
+    #chatInputForm {
       display: flex;
       border-top: 1px solid #00ff88;
-      padding: 0.5rem;
       background: #1f1f1f;
     }
-    #chatModal.light #chatInputContainer {
-      background: #e0e0e0;
-      border-top-color: #009944;
-    }
-
     #chatInput {
-      flex: 1;
+      flex-grow: 1;
+      padding: 0.5rem;
       border: none;
-      border-radius: 20px;
-      padding: 0.5rem 1rem;
-      font-size: 14px;
+      background: #121212;
+      color: white;
+      font-size: 1rem;
+    }
+    #chatInput:focus {
       outline: none;
-      background: #2a2a2a;
-      color: #eee;
-      transition: background-color 0.3s;
     }
-    #chatModal.light #chatInput {
-      background: #fff;
-      color: #222;
-    }
-    #chatInput::placeholder {
-      color: #999;
-    }
-
-    #chatSendBtn {
-      background: linear-gradient(45deg, #00ff88, #00cc66);
+    #chatSendButton {
+      background: #00ff88;
       border: none;
       color: #121212;
-      padding: 0 15px;
-      margin-left: 0.5rem;
-      border-radius: 20px;
-      font-weight: 700;
+      padding: 0 1rem;
       cursor: pointer;
-      user-select: none;
+      font-weight: bold;
       transition: background 0.3s;
     }
-    #chatSendBtn:hover {
-      background: linear-gradient(45deg, #00cc66, #009944);
+    #chatSendButton:hover {
+      background: #00cc66;
     }
-
-    /* Modal overlay for login */
+    /* Login modal */
     #loginModal {
+      display: none;
       position: fixed;
-      inset: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.8);
-      display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 200;
-      user-select: none;
+      z-index: 2000;
     }
-    #loginModal.light {
-      background: rgba(255,255,255,0.9);
+    #loginModal.active {
+      display: flex;
     }
-
     #loginBox {
       background: #222;
       padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,255,136,0.5);
-      width: 320px;
-      max-width: 90vw;
+      border-radius: 10px;
+      width: 280px;
       text-align: center;
-      color: #eee;
-      user-select: text;
-    }
-    #loginModal.light #loginBox {
-      background: #fff;
-      color: #222;
-      box-shadow: 0 8px 20px rgba(0,170,85,0.5);
-    }
-    #loginBox h2 {
-      margin-top: 0;
-      margin-bottom: 1rem;
-      font-weight: 700;
-      color: #00ff88;
-    }
-    #loginBox.light h2 {
-      color: #008833;
+      box-shadow: 0 0 15px #00ff88;
     }
     #loginBox input {
       width: 100%;
-      padding: 0.6rem 1rem;
-      margin-bottom: 1.2rem;
+      padding: 0.5rem;
+      margin: 1rem 0;
       font-size: 1rem;
-      border-radius: 25px;
       border: none;
-      outline: none;
-      background-color: #2a2a2a;
-      color: #ddd;
-      transition: background-color 0.3s;
-    }
-    #loginBox.light input {
-      background-color: #f0f0f0;
-      color: #222;
-    }
-    #loginBox input::placeholder {
-      color: #999;
-    }
-    #loginBox input:focus {
-      background-color: #3a3a3a;
-      box-shadow: 0 0 8px #00ff88;
-      color: white;
-    }
-    #loginBox.light input:focus {
-      background-color: #ddd;
-      box-shadow: 0 0 8px #009944;
-      color: #111;
+      border-radius: 5px;
     }
     #loginBox button {
-      background: linear-gradient(45deg, #00ff88, #00cc66);
+      background: #00ff88;
       border: none;
-      padding: 0.8rem 1.5rem;
-      border-radius: 25px;
-      font-weight: 700;
-      color: #121212;
+      padding: 0.7rem 1.5rem;
+      font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 6px 12px rgba(0,255,136,0.5);
-      transition: transform 0.2s, box-shadow 0.2s;
-      user-select: none;
-      width: 100%;
+      border-radius: 5px;
+      color: #121212;
+      transition: background 0.3s;
     }
     #loginBox button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 16px rgba(0,255,136,0.8);
+      background: #00cc66;
     }
   </style>
 </head>
@@ -452,266 +219,229 @@
   </header>
 
   <div class="controls">
-    <input id="search" type="text" placeholder="Поиск трека..." aria-label="Поиск трека" />
+    <input id="search" type="text" placeholder="Поиск трека...">
     <button onclick="filterByGenre('all')">Все</button>
     <button onclick="filterByGenre('classical')">Классика</button>
-    <button onclick="filterByGenre('electronic')">Электронная</button>
-    <button onclick="filterByGenre('rock')">Рок</button>
-    <button onclick="filterByGenre('pop')">Поп</button>
-    <button onclick="toggleTheme()">Тема</button>
+    <button onclick="filterByGenre('lounge')">Лаунж</button>
+    <button onclick="filterByGenre('electronic')">Электроника</button>
+    <button onclick="filterByGenre('vintage')">Винтаж</button>
+    <button onclick="filterByGenre('ethno')">Этно</button>
+    <button onclick="filterByGenre('live')">Лайв</button>
+    <button onclick="showFavorites()">❤️ Избранное</button>
+    <button onclick="toggleTheme()">🌓 Тема</button>
   </div>
 
-  <div class="track-list" id="trackList">
-    <!-- Треки будут добавлены сюда через JS -->
+  <div class="track-list" id="trackList"></div>
+
+  <div class="footer">
+    Made with ❤️ using archive.org open music
   </div>
 
-  <button id="chatToggleBtn" title="Открыть чат">💬</button>
+  <!-- Кнопка открытия чата -->
+  <button id="chatButton" title="Открыть чат">💬</button>
 
-  <div id="chatModal" role="region" aria-label="Чат сообщений">
+  <!-- Окно чата -->
+  <div id="chatModal">
     <div id="chatHeader">
-      <span>Чат</span>
-      <button id="chatCloseBtn" aria-label="Закрыть чат">×</button>
+      Чат
+      <button id="chatCloseBtn" title="Закрыть чат" style="background:none;border:none;cursor:pointer;font-weight:bold;font-size:1.2rem;color:#121212;">×</button>
     </div>
-    <div id="chatMessages" tabindex="0" aria-live="polite"></div>
-    <div id="chatInputContainer">
-      <input type="text" id="chatInput" placeholder="Введите сообщение..." aria-label="Введите сообщение" autocomplete="off" />
-      <button id="chatSendBtn" aria-label="Отправить сообщение">Отправить</button>
-    </div>
+    <div id="chatMessages"></div>
+    <form id="chatInputForm">
+      <input id="chatInput" autocomplete="off" placeholder="Введите сообщение..." />
+      <button type="submit" id="chatSendButton">Отправить</button>
+    </form>
   </div>
 
-  <!-- Модал для логина -->
-  <div id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+  <!-- Модальное окно логина -->
+  <div id="loginModal">
     <div id="loginBox">
-      <h2 id="loginTitle">Введите ваш ник</h2>
-      <input type="text" id="usernameInput" placeholder="Ваш ник" aria-label="Ваш ник" maxlength="20" autocomplete="off" />
+      <h2>Введите ник</h2>
+      <input id="loginInput" placeholder="Ваш ник" autocomplete="off" />
       <button id="loginBtn">Войти</button>
     </div>
   </div>
 
-  <footer class="footer">© 2025 Free Music App</footer>
+<script>
+  // Музыкальные треки
+  const tracks = [
+    { title: "Beethoven - Symphony No.5", src: "https://archive.org/download/BeethovenSymphony5/BeethovenSymphony5.mp3", genre: "classical" },
+    { title: "Chopin - Prelude No.15", src: "https://archive.org/download/Chopin_Prelude_No_15/Chopin_Prelude_No_15.mp3", genre: "classical" },
+    { title: "Electronic Breeze", src: "https://archive.org/download/electronic_beats/electronic_breeze.mp3", genre: "electronic" },
+    { title: "Lounge Cafe", src: "https://archive.org/download/lounge_collection/lounge_cafe.mp3", genre: "lounge" },
+    { title: "Vintage Jazz", src: "https://archive.org/download/vintage_jazz/vintage_jazz_01.mp3", genre: "vintage" },
+    { title: "Ethno Vibes", src: "https://archive.org/download/ethno_collection/ethno_vibes.mp3", genre: "ethno" },
+    { title: "Live Session A", src: "https://archive.org/download/live_music_a/live_session_a.mp3", genre: "live" },
+  ];
 
-  <script>
-    // --- Музыка ---
-    const tracks = [
-      {
-        id: 1,
-        title: "Smooth Jazz",
-        url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Julian_Rhodes/Julian_Rhodes_-_Single/Smooth_Jazz.mp3",
-        genre: "jazz"
-      },
-      {
-        id: 2,
-        title: "Classical Symphony",
-        url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Dodgy_Bits/From_the_Deck_of_the_Queen/Classical_Symphony.mp3",
-        genre: "classical"
-      },
-      {
-        id: 3,
-        title: "Electro Groove",
-        url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Electronic_Music_Master/Electro_Groove/Electro_Groove.mp3",
-        genre: "electronic"
-      },
-      {
-        id: 4,
-        title: "Rock Anthem",
-        url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Tom_Woodward/Tom_Woodward_-_Stepping_Out/Rock_Anthem.mp3",
-        genre: "rock"
-      },
-      {
-        id: 5,
-        title: "Pop Hit",
-        url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Pop_Hit/Pop_Hit.mp3",
-        genre: "pop"
-      }
-    ];
+  window.appState = window.appState || {
+    currentGenre: 'all',
+    favorites: JSON.parse(localStorage.getItem('favorites') || '[]')
+  };
 
-    const trackListEl = document.getElementById('trackList');
-    const searchInput = document.getElementById('search');
+  // Отрисовка треков
+  function renderTracks(filter = '') {
+    const list = document.getElementById('trackList');
+    list.innerHTML = '';
+    const lowerFilter = filter.toLowerCase();
 
-    let currentGenre = 'all';
-    let likes = JSON.parse(localStorage.getItem('likes')) || {};
-
-    function renderTracks() {
-      trackListEl.innerHTML = '';
-      const search = searchInput.value.toLowerCase();
-      const filtered = tracks.filter(t => {
-        if(currentGenre !== 'all' && t.genre !== currentGenre) return false;
-        if(!t.title.toLowerCase().includes(search)) return false;
-        return true;
-      });
-      filtered.forEach(t => {
-        const div = document.createElement('div');
-        div.className = 'track';
-        div.innerHTML = `
-          <h3>${t.title}</h3>
-          <audio controls preload="none" src="${t.url}"></audio>
-          <div class="like ${likes[t.id] ? 'liked' : ''}" data-id="${t.id}" title="Нравится">&#10084;</div>
-        `;
-        trackListEl.appendChild(div);
-      });
-      // Добавим обработчики лайков
-      document.querySelectorAll('.like').forEach(el => {
-        el.onclick = () => {
-          const id = el.getAttribute('data-id');
-          likes[id] = !likes[id];
-          localStorage.setItem('likes', JSON.stringify(likes));
-          el.classList.toggle('liked');
-        };
-      });
+    let filteredTracks = tracks.filter(t => (appState.currentGenre === 'all' || t.genre === appState.currentGenre));
+    if (filter) {
+      filteredTracks = filteredTracks.filter(t => t.title.toLowerCase().includes(lowerFilter));
     }
 
-    searchInput.addEventListener('input', renderTracks);
+    filteredTracks.forEach(track => {
+      const div = document.createElement('div');
+      div.className = 'track';
 
-    function filterByGenre(genre) {
-      currentGenre = genre;
-      renderTracks();
-    }
+      const liked = appState.favorites.includes(track.src);
 
-    // Темная/светлая тема
-    function toggleTheme() {
-      if(document.body.classList.contains('light')) {
-        document.body.classList.remove('light');
-        chatModal.classList.remove('light');
-        loginModal.classList.remove('light');
-      } else {
-        document.body.classList.add('light');
-        chatModal.classList.add('light');
-        loginModal.classList.add('light');
-      }
-      localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
-    }
-
-    // Инициализация темы
-    if(localStorage.getItem('theme') === 'light') {
-      toggleTheme();
-    }
-
-    renderTracks();
-
-    // --- Чат и авторизация ---
-
-    const chatToggleBtn = document.getElementById('chatToggleBtn');
-    const chatModal = document.getElementById('chatModal');
-    const chatCloseBtn = document.getElementById('chatCloseBtn');
-    const chatMessages = document.getElementById('chatMessages');
-    const chatInput = document.getElementById('chatInput');
-    const chatSendBtn = document.getElementById('chatSendBtn');
-
-    const loginModal = document.getElementById('loginModal');
-    const usernameInput = document.getElementById('usernameInput');
-    const loginBtn = document.getElementById('loginBtn');
-
-    let username = localStorage.getItem('username') || '';
-
-    // Если ник не установлен, показать модал логина
-    function showLogin() {
-      loginModal.style.display = 'flex';
-      usernameInput.focus();
-    }
-    function hideLogin() {
-      loginModal.style.display = 'none';
-    }
-
-    // Проверка ника на валидность
-    function isValidUsername(name) {
-      return name.trim().length >= 2 && name.trim().length <= 20;
-    }
-
-    loginBtn.addEventListener('click', () => {
-      const name = usernameInput.value.trim();
-      if(!isValidUsername(name)) {
-        alert('Ник должен быть от 2 до 20 символов.');
-        usernameInput.focus();
-        return;
-      }
-      username = name;
-      localStorage.setItem('username', username);
-      hideLogin();
+      div.innerHTML = `
+        <h3>${track.title}</h3>
+        <audio controls src="${track.src}"></audio>
+        <div class="like ${liked ? 'liked' : ''}" onclick="toggleLike('${track.src}', this)">❤️</div>
+      `;
+      list.appendChild(div);
     });
+  }
 
-    usernameInput.addEventListener('keydown', e => {
-      if(e.key === 'Enter') loginBtn.click();
-    });
+  function filterByGenre(genre) {
+    appState.currentGenre = genre;
+    renderTracks(document.getElementById('search').value);
+  }
 
-    if(!username) {
-      showLogin();
+  function toggleLike(src, el) {
+    if (appState.favorites.includes(src)) {
+      appState.favorites = appState.favorites.filter(f => f !== src);
     } else {
-      hideLogin();
+      appState.favorites.push(src);
     }
+    localStorage.setItem('favorites', JSON.stringify(appState.favorites));
+    el.classList.toggle('liked');
+  }
 
-    // Показ/скрытие чата
-    chatToggleBtn.addEventListener('click', () => {
-      if(!username) {
-        alert('Сначала введите ник!');
-        showLogin();
-        return;
-      }
-      if(chatModal.style.display === 'flex') {
-        chatModal.style.display = 'none';
-      } else {
-        chatModal.style.display = 'flex';
-        chatInput.focus();
-        loadMessages();
-      }
+  function showFavorites() {
+    const list = document.getElementById('trackList');
+    list.innerHTML = '';
+
+    const favTracks = tracks.filter(t => appState.favorites.includes(t.src));
+    favTracks.forEach(track => {
+      const div = document.createElement('div');
+      div.className = 'track';
+      div.innerHTML = `
+        <h3>${track.title}</h3>
+        <audio controls src="${track.src}"></audio>
+        <div class="like liked" onclick="toggleLike('${track.src}', this)">❤️</div>
+      `;
+      list.appendChild(div);
     });
+  }
 
-    chatCloseBtn.addEventListener('click', () => {
-      chatModal.style.display = 'none';
+  document.getElementById('search').addEventListener('input', (e) => {
+    renderTracks(e.target.value);
+  });
+
+  function toggleTheme() {
+    const isDark = document.body.style.backgroundColor === 'white';
+    document.body.style.backgroundColor = isDark ? '#121212' : 'white';
+    document.body.style.color = isDark ? 'white' : '#121212';
+  }
+
+  // --- Чат ---
+
+  const chatButton = document.getElementById('chatButton');
+  const chatModal = document.getElementById('chatModal');
+  const chatCloseBtn = document.getElementById('chatCloseBtn');
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInputForm = document.getElementById('chatInputForm');
+  const chatInput = document.getElementById('chatInput');
+
+  const loginModal = document.getElementById('loginModal');
+  const loginInput = document.getElementById('loginInput');
+  const loginBtn = document.getElementById('loginBtn');
+
+  // Хранение текущего пользователя
+  let currentUser = localStorage.getItem('chatUser') || null;
+
+  // Хранение сообщений
+  function getMessages() {
+    return JSON.parse(localStorage.getItem('chatMessages') || '[]');
+  }
+  function saveMessages(msgs) {
+    localStorage.setItem('chatMessages', JSON.stringify(msgs));
+  }
+
+  // Показать чат
+  function openChat() {
+    if (!currentUser) {
+      loginModal.classList.add('active');
+    } else {
+      chatModal.classList.add('active');
+      renderMessages();
+    }
+  }
+
+  // Скрыть чат
+  function closeChat() {
+    chatModal.classList.remove('active');
+  }
+
+  // Показать логин
+  function closeLogin() {
+    loginModal.classList.remove('active');
+  }
+
+  chatButton.addEventListener('click', openChat);
+  chatCloseBtn.addEventListener('click', closeChat);
+
+  loginBtn.addEventListener('click', () => {
+    const username = loginInput.value.trim();
+    if (username.length < 2) {
+      alert('Ник должен быть минимум 2 символа');
+      return;
+    }
+    currentUser = username;
+    localStorage.setItem('chatUser', currentUser);
+    closeLogin();
+    openChat();
+  });
+
+  // Отрисовка сообщений
+  function renderMessages() {
+    const msgs = getMessages();
+    chatMessages.innerHTML = '';
+    msgs.forEach(msg => {
+      const div = document.createElement('div');
+      div.style.padding = '4px 6px';
+      div.style.borderBottom = '1px solid #00ff88';
+      div.innerHTML = `<b>${escapeHtml(msg.username)}</b>: ${escapeHtml(msg.text)}`;
+      chatMessages.appendChild(div);
     });
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
 
-    // Отправка сообщения
-    function sendMessage() {
-      const text = chatInput.value.trim();
-      if(text.length === 0) return;
-      const messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
-      messages.push({
-        id: Date.now(),
-        username,
-        text,
-        timestamp: new Date().toISOString()
-      });
-      localStorage.setItem('chatMessages', JSON.stringify(messages));
-      chatInput.value = '';
-      renderMessages(messages);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
+  // Безопасное экранирование текста
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
 
-    chatSendBtn.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keydown', e => {
-      if(e.key === 'Enter') {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
+  // Отправка сообщения
+  chatInputForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = chatInput.value.trim();
+    if (!text) return;
+    const msgs = getMessages();
+    msgs.push({ id: Date.now(), username: currentUser, text, timestamp: new Date().toISOString() });
+    saveMessages(msgs);
+    chatInput.value = '';
+    renderMessages();
+  });
 
-    // Рендер сообщений
-    function renderMessages(messages) {
-      chatMessages.innerHTML = '';
-      messages.forEach(msg => {
-        const div = document.createElement('div');
-        div.className = 'chat-message';
-        if(msg.username === username) div.classList.add('self');
-        const time = new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-        div.innerHTML = `<span class="username">${msg.username}:</span> ${msg.text} <span style="font-size:10px; color:#888; user-select:none;">${time}</span>`;
-        chatMessages.appendChild(div);
-      });
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    // Загрузка сообщений и обновление
-    function loadMessages() {
-      const messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
-      renderMessages(messages);
-    }
-
-    // Обновлять чат каждую секунду (имитация)
-    setInterval(() => {
-      if(chatModal.style.display === 'flex') {
-        loadMessages();
-      }
-    }, 1000);
-
-  </script>
+  // При загрузке страницы
+  renderTracks();
+</script>
 
 </body>
 </html>
